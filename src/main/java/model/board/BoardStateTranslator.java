@@ -26,15 +26,16 @@ public final class BoardStateTranslator {
 
     public static final String compressedIdOf(Piece p) {
         if (null == p) {
-            return "''";
+            return "";
         }
-        return "'" + pieceToString(p).replace(" ", "").substring(0, 2) + "'";
+        return pieceToString(p).replace(" ", "").substring(0, 2);
     }
 
     private static final String pieceToString(Piece p) {
         String compressedId;
+        
+        // Knight is a special case since K is used for King.
         if (Rank.Knight.equals(p.rank())) {
-            // Knight is a special case since K is used for King.
             compressedId = p.toString().replace("K", "N");
         } else {
             compressedId = p.toString();

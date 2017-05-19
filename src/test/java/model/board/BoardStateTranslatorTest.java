@@ -15,8 +15,8 @@ import org.junit.Test;
 
 public class BoardStateTranslatorTest {
 
-	private static final String BLACK_QUEEN = "'bQ'";
-	private static final String SQUARES_FOR_SET_BOARD = "'wR','wN','wB','wQ','wK','wB','wN','wR','wP','wP','wP','wP','wP','wP','wP','wP','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','bP','bP','bP','bP','bP','bP','bP','bP','bR','bN','bB','bQ','bK','bB','bN','bR'";
+	private static final String BLACK_QUEEN = "bQ";
+	private static final String SQUARES_FOR_SET_BOARD = "wR,wN,wB,wQ,wK,wB,wN,wR,wP,wP,wP,wP,wP,wP,wP,wP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,bP,bP,bP,bP,bP,bP,bP,bP,bR,bN,bB,bQ,bK,bB,bN,bR";
 
 	@Test
 	public void translate_set_board_to_simple_string() {
