@@ -203,6 +203,11 @@ public class ChessBoardTest {
         chessBoard.capture(capture(a_2, b_3, b_pawn_b_3));
     }
 
+    public void playing_a_Move_event_on_an_empty_square_is_ignored() {
+        chessBoard = new ChessBoard().setBoardForGame();
+        chessBoard.move(move(e_3, e_4));
+    }
+
     @Test(expected = IllegalStateException.class)
     public void playEvent_throws_exception_if_a_Remove_is_called_after_the_board_is_set() {
         chessBoard = new ChessBoard().setBoardForGame();

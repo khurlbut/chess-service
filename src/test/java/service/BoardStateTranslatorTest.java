@@ -1,10 +1,12 @@
-package model.board;
+package service;
 
-import static model.board.BoardStateTranslator.boardToString;
-import static model.board.BoardStateTranslator.compressedIdOf;
 import static model.piece.PieceFactory.newPiece;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static service.BoardStateTranslator.boardToString;
+import static service.BoardStateTranslator.compressedIdOf;
+import model.board.ChessBoard;
+import model.board.Square;
 import model.enums.Color;
 import model.enums.Column;
 import model.enums.Rank;

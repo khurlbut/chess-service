@@ -1,5 +1,7 @@
-package model.board;
+package service;
 
+import model.board.ChessBoard;
+import model.board.Square;
 import model.enums.Column;
 import model.enums.Rank;
 import model.enums.Row;

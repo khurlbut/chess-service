@@ -168,6 +168,9 @@ public class ChessBoard {
 
     private boolean isLegalMove(MoveEvent event) {
         Piece piece = pieceAt(event.source());
+        if (piece == null) {
+        	return false;
+        }
         return moveToSquares(piece).contains(event.target());
     }
 
