@@ -30,15 +30,6 @@ public class KingViewTest {
 
 	private KingView w_kingView_e_4 = null;
 	private KingView b_kingView_e_4 = null;
-	private KingView w_kingView_e_1 = null;
-	private KingView b_kingView_e_8 = null;
-
-	private final Square a_1 = square(Column.A, Row.R1);
-	private final Square c_1 = square(Column.C, Row.R1);
-	private final Square h_1 = square(Column.H, Row.R1);
-	private final Square g_1 = square(Column.G, Row.R1);
-	private final Square a_8 = square(Column.A, Row.R8);
-	private final Square h_8 = square(Column.H, Row.R8);
 
 	private final Square e_5 = square(Column.E, Row.R5);
 	private final Square f_5 = square(Column.F, Row.R5);
@@ -66,31 +57,12 @@ public class KingViewTest {
 	private final Square c_6 = square(Column.C, Row.R6);
 	private final Square d_6 = square(Column.D, Row.R6);
 
-	private final Square e_1 = square(Column.E, Row.R1);
-
 	private ChessBoard chessBoard;
-
+	
 	@Before
 	public void setUp() {
 		chessBoard = new ChessBoard();
 		w_kingView_e_4 = newKingView(Color.WHITE, Column.E, Row.R4);
-	}
-
-	@Test
-	public void it_can_castle_with_A1_rook() {
-		Piece w_king_e_1 = newPiece(Color.WHITE, Rank.King, e_1);
-		Piece w_rook_a_1 = newPiece(Color.WHITE, Rank.Rook, a_1);
-
-		PutEvent put_w_king_e_1 = put(w_king_e_1);
-		PutEvent put_w_rook_a_1 = put(w_rook_a_1);
-
-		List<GameEvent> putEvents = eventList(put_w_king_e_1, put_w_rook_a_1);
-		chessBoard = play(putEvents, chessBoard);
-		w_kingView_e_1 = newKingView(Color.WHITE, Column.E, Row.R1);
-
-		List<Square> moveToSquares = w_kingView_e_1.moveToSquares();
-		
-		assertTrue(moveToSquares.contains(c_1));
 	}
 
 	@Test

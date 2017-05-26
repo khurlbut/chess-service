@@ -3,7 +3,9 @@ package model.board.views;
 import static model.board.Sugar.hasMoved;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import model.board.BoardPosition;
 import model.board.Square;
@@ -13,9 +15,12 @@ import model.enums.Row;
 import model.enums.TravelDistance;
 import model.enums.ViewVector;
 import model.piece.Piece;
-import model.piece.Piece;
 
 public final class KingView extends RadiatingView {
+
+	private static final int CASTLE_ON_H = 2;
+
+	private static final int CASTLE_ON_A = 3;
 
 	private static final ViewVector[] KING_MOVES = { ViewVector.UP,
 			ViewVector.RIGHT_UP, ViewVector.RIGHT, ViewVector.RIGHT_DOWN,
@@ -33,39 +38,57 @@ public final class KingView extends RadiatingView {
 	public List<Square> moveToSquares() {
 		List<Square> safeSquares = new ArrayList<Square>();
 		List<Square> moveToSquares = super.moveToSquares();
+		Set<Square> localMoveToSquares = new HashSet<Square>(moveToSquares);
 
-		for (Square moveToSquare : moveToSquares) {
-			if (!squareIsUnderAttack(moveToSquare)) {
-				safeSquares.add(moveToSquare);
-			}
-		}
-		Piece thisKing = chessBoard.pieceAt(viewPoint);
+		localMoveToSquares = addCastleSquares(localMoveToSquares, Column.A,
+				CASTLE_ON_A);
+		localMoveToSquares = addCastleSquares(localMoveToSquares, Column.H,
+				CASTLE_ON_H);
 
-		if (thisKing != null) {
-			Square squareA = new Square(Column.A, Row.R1);
-
-			Piece rookA = chessBoard.pieceAt(squareA);
-
-			if (!hasMoved(thisKing, viewPoint)) {
-				if (!hasMoved(rookA, squareA)) {
-					Square neighborLeftOne = viewPoint
-							.neighbor(ViewVector.LEFT);
-					if (chessBoard.pieceAt(neighborLeftOne) == null) {
-						Square neighborLeftTwo = neighborLeftOne
-								.neighbor(ViewVector.LEFT);
-						if (chessBoard.pieceAt(neighborLeftTwo) == null) {
-							Square neighborLeftThree = neighborLeftTwo
-									.neighbor(ViewVector.LEFT);
-							if (chessBoard.pieceAt(neighborLeftThree) == null) {
-								safeSquares.add(neighborLeftTwo);
-							}
-						}
-					}
-				}
+		for (Square s : localMoveToSquares) {
+			if (!squareIsUnderAttack(s)) {
+				safeSquares.add(s);
 			}
 		}
 
 		return safeSquares;
+	}
+
+	private Set<Square> addCastleSquares(Set<Square> moveToSquares,
+			Column rookCol, int columnsToCheck) {
+
+		Column kingColumn = viewPoint.col();
+		Row thisRow = viewPoint.row();
+
+		if (kingAndRookHaveNotMoved(rookCol, thisRow)) {
+			int dir = (CASTLE_ON_A == columnsToCheck ? -1 : 1);
+
+			for (int c = 1; c <= columnsToCheck; c++) {
+				Column thisCol = kingColumn.horizontalNeighbor(dir * c);
+				Square s = new Square(thisCol, thisRow);
+				if (chessBoard.pieceAt(s) != null || squareIsUnderAttack(s)) {
+					return moveToSquares;
+				}
+			}
+			Column moveToColumn = dir < 0 ? Column.C : Column.G;
+			moveToSquares.add(new Square(moveToColumn, thisRow));
+		}
+
+		return moveToSquares;
+	}
+
+	private boolean kingAndRookHaveNotMoved(Column rookColumn, Row rookRow) {
+		Piece king = chessBoard.pieceAt(viewPoint);
+
+		Square rookSquare = new Square(rookColumn, rookRow);
+		Piece rook = chessBoard.pieceAt(rookSquare);
+
+		if (king != null && !hasMoved(king, viewPoint) && rook != null
+				&& !hasMoved(rook, rookSquare)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private boolean squareIsUnderAttack(Square availableSquare) {
