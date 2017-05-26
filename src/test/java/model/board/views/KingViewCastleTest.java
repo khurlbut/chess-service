@@ -8,6 +8,7 @@ import static model.board.Sugar.eventList;
 import static model.board.Sugar.play;
 import static model.board.Sugar.position;
 import static model.board.Sugar.put;
+import static model.board.Sugar.move;
 import static model.board.Sugar.square;
 import static model.board.views.ViewSugar.kingView;
 import static model.piece.PieceFactory.newPiece;
@@ -20,12 +21,14 @@ import java.util.List;
 
 import model.board.ChessBoard;
 import model.board.GameEvent;
+import model.board.MoveEvent;
 import model.board.PutEvent;
 import model.board.Square;
 import model.enums.Color;
 import model.enums.Column;
 import model.enums.Rank;
 import model.enums.Row;
+import model.piece.MovementTrackablePiece;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +50,7 @@ public class KingViewCastleTest {
 	private final Square h_8 = square(Column.H, Row.R8);
 	private final Square g_8 = square(Column.G, Row.R8);
 
+	private final Square d_1 = square(Column.F, Row.R1);
 	private final Square d_2 = square(Column.D, Row.R2);
 
 	private ChessBoard chessBoard;
@@ -54,32 +58,6 @@ public class KingViewCastleTest {
 	@Before
 	public void setUp() {
 		chessBoard = new ChessBoard();
-	}
-
-	@Test
-	public void it_finds_the_right_number_of_move_to_squares() {
-		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
-		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
-		PutEvent put_rook_h = put(newPiece(Color.WHITE, Rank.Rook, h_1));
-		
-		List<GameEvent> putEvents = eventList(put_king, put_rook_a, put_rook_h);
-		chessBoard = play(putEvents, chessBoard);
-		kingView = newKingView(Color.WHITE, e_1);
-		
-		assertThat(kingView.moveToSquares().size(), equalTo(7));
-	}
-	
-	@Test
-	public void it_can_not_pass_through_check_when_castling() {
-		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
-		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
-		PutEvent put_rook_d_2 = put(newPiece(Color.BLACK, Rank.Rook, d_2));
-		
-		List<GameEvent> putEvents = eventList(put_king, put_rook_a, put_rook_d_2);
-		chessBoard = play(putEvents, chessBoard);
-		kingView = newKingView(Color.WHITE, e_1);
-		
-		assertFalse(kingView.moveToSquares().contains(c_1));
 	}
 	
 	@Test
@@ -128,6 +106,78 @@ public class KingViewCastleTest {
 	public void it_can_not_castle_with_H8_rook_if_rook_is_not_on_square() {
 		List<Square> moveToSquares = attempt_castle_without_rook(Color.BLACK, Rank.King, e_8);
 		assertFalse(moveToSquares.contains(g_8));
+	}
+
+	@Test
+	public void it_finds_the_right_number_of_move_to_squares() {
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
+		PutEvent put_rook_h = put(newPiece(Color.WHITE, Rank.Rook, h_1));
+		
+		List<GameEvent> putEvents = eventList(put_king, put_rook_a, put_rook_h);
+		chessBoard = play(putEvents, chessBoard);
+		kingView = newKingView(Color.WHITE, e_1);
+		
+		assertThat(kingView.moveToSquares().size(), equalTo(7));
+	}
+	
+	@Test
+	public void it_can_not_pass_through_check_when_castling() {
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
+		PutEvent put_rook_d_2 = put(newPiece(Color.BLACK, Rank.Rook, d_2));
+		
+		List<GameEvent> putEvents = eventList(put_king, put_rook_a, put_rook_d_2);
+		chessBoard = play(putEvents, chessBoard);
+		kingView = newKingView(Color.WHITE, e_1);
+		
+		assertFalse(kingView.moveToSquares().contains(c_1));
+	}
+	
+	@Test
+	public void it_can_not_castle_after_king_has_moved() {
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
+		MoveEvent move_king_over = move(e_1, d_1);
+		MoveEvent move_king_back = move(d_1, e_1);
+		
+		List<GameEvent> putEvents = eventList(put_king, put_rook_a);
+		chessBoard = play(putEvents, chessBoard);
+		
+		assertFalse(((MovementTrackablePiece) chessBoard.pieceAt(e_1)).hasMoved());
+		
+		chessBoard = chessBoard.setBoardForGameInProgress();
+		putEvents = eventList(move_king_over, move_king_back);
+		chessBoard = play(putEvents, chessBoard);
+		
+		kingView = newKingView(Color.WHITE, e_1);
+
+		assertTrue(((MovementTrackablePiece) chessBoard.pieceAt(e_1)).hasMoved());
+
+		assertFalse(kingView.moveToSquares().contains(c_1));
+	}
+	
+	@Test
+	public void it_can_not_castle_after_rook_has_moved() {		
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
+		MoveEvent move_rook_over = move(a_1, c_1);
+		MoveEvent move_rook_back = move(c_1, a_1);
+		
+		List<GameEvent> putEvents = eventList(put_king, put_rook_a);
+		chessBoard = play(putEvents, chessBoard);
+		
+		assertFalse(((MovementTrackablePiece) chessBoard.pieceAt(a_1)).hasMoved());
+		
+		chessBoard = chessBoard.setBoardForGameInProgress();
+		putEvents = eventList(move_rook_over, move_rook_back);
+		chessBoard = play(putEvents, chessBoard);
+		
+		kingView = newKingView(Color.WHITE, e_1);
+
+		assertTrue(((MovementTrackablePiece) chessBoard.pieceAt(a_1)).hasMoved());
+		
+		assertFalse(kingView.moveToSquares().contains(c_1));
 	}
 
 	private List<Square> setup_castle(Color color, Square kingSquare, Square rookSquare) {

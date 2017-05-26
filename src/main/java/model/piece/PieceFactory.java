@@ -14,7 +14,7 @@ public class PieceFactory {
 			throw new ConstructorArgsException("Arguments must not be null!");
 		}
 
-		if (Rank.King == rank || Rank.Pawn == rank) {
+		if (Rank.King == rank || Rank.Rook == rank || Rank.Pawn == rank) {
 			piece = newPiece(color, rank, homeSquare, false);
 		} else {
 			piece = new Piece(color, rank, homeSquare);
@@ -23,11 +23,11 @@ public class PieceFactory {
 		return piece;
 	}
 	
-	public static Piece newPiece(MovementTrackablePiece piece) {
+	public static MovementTrackablePiece newPiece(MovementTrackablePiece piece) {
 		return newPiece(piece.color(), piece.rank(), piece.homeSquare(), true);
 	}
 	
-	public static Piece newPiece(Color color, Rank rank, Square homeSquare,
+	public static MovementTrackablePiece newPiece(Color color, Rank rank, Square homeSquare,
 			boolean hasMoved) {
 		return new MovementTrackablePiece(color, rank, homeSquare, hasMoved);
 	}
