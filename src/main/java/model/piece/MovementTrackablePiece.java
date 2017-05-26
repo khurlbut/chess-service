@@ -12,7 +12,7 @@ public class MovementTrackablePiece extends Piece {
 		this.hasMoved = hasMoved;
 	}
 
-	boolean hasMoved() {
+	public boolean hasMoved() {
 		return hasMoved;
 	}
 }

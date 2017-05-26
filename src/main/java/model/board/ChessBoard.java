@@ -9,9 +9,7 @@ import model.board.views.RankView;
 import model.enums.Color;
 import model.exceptions.ConstructorArgsException;
 import model.exceptions.IllegalGameEventException;
-import model.piece.MovementTrackablePiece;
 import model.piece.Piece;
-import model.piece.PieceFactory;
 
 public class ChessBoard {
 
@@ -95,11 +93,6 @@ public class ChessBoard {
 
 	ChessBoard move(MoveEvent move) {
 		guard(move);
-		Piece movingPiece = pieceAt(move.source());
-		if (movingPiece instanceof MovementTrackablePiece) {
-			movingPiece = PieceFactory.newPiece(movingPiece.color(),
-					movingPiece.rank(), movingPiece.homeSquare(), true);
-		}
 		return new ChessBoard(eventsList(move), backingMap(move), boardIsSet);
 	}
 
