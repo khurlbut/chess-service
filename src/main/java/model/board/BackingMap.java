@@ -7,6 +7,7 @@ import java.util.Map;
 
 import model.enums.Color;
 import model.piece.MovementTrackablePiece;
+import model.piece.Pawn;
 import model.piece.Piece;
 import model.piece.PieceFactory;
 
@@ -48,10 +49,15 @@ final class BackingMap {
 		return new BackingMap(newBackingMapAfterPut(square, piece));
 	}
 
-	BackingMap put(Square square, MovementTrackablePiece piece) {
-		validatePutArgs(square, piece);
-		return new BackingMap(newBackingMapAfterPut(square, piece));
-	}
+//	BackingMap put(Square square, MovementTrackablePiece piece) {
+//		validatePutArgs(square, piece);
+//		return new BackingMap(newBackingMapAfterPut(square, piece));
+//	}
+//	
+//	BackingMap put(Square square, Pawn piece) {
+//		validatePutArgs(square, piece);
+//		return new BackingMap(newBackingMapAfterPut(square, piece));
+//	}
 
 	BackingMap move(Square source, Square target) {
 		validateMoveArgs(source, target);
@@ -101,6 +107,9 @@ final class BackingMap {
 	private Piece trackMovement(Piece piece) {
 
 		if (pieceTracksMovement(piece) && pieceHasNotMoved(piece)) {
+			if (piece instanceof Pawn) {
+				piece = PieceFactory.newPawn((Pawn) piece);
+			}
 			piece = PieceFactory.newPiece((MovementTrackablePiece) piece);
 		}
 

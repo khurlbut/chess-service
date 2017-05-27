@@ -13,8 +13,10 @@ public class PieceFactory {
 		if (color == null || rank == null || homeSquare == null) {
 			throw new ConstructorArgsException("Arguments must not be null!");
 		}
-
-		if (Rank.King == rank || Rank.Rook == rank || Rank.Pawn == rank) {
+		
+		if (Rank.Pawn == rank) {
+			piece = newPawn(color, rank, homeSquare, false);
+		} else if (Rank.King == rank || Rank.Rook == rank || Rank.Pawn == rank) {
 			piece = newPiece(color, rank, homeSquare, false);
 		} else {
 			piece = new Piece(color, rank, homeSquare);
@@ -27,9 +29,17 @@ public class PieceFactory {
 		return newPiece(piece.color(), piece.rank(), piece.homeSquare(), true);
 	}
 	
-	public static MovementTrackablePiece newPiece(Color color, Rank rank, Square homeSquare,
+	public static MovementTrackablePiece newPawn(Pawn pawn) {
+		return newPawn(pawn.color(), pawn.rank(), pawn.homeSquare(), true);
+	}
+	
+	private static MovementTrackablePiece newPiece(Color color, Rank rank, Square homeSquare,
 			boolean hasMoved) {
 		return new MovementTrackablePiece(color, rank, homeSquare, hasMoved);
+	}
+	
+	private static MovementTrackablePiece newPawn(Color color, Rank rank, Square homeSquare, boolean hasMoved) {
+		return new Pawn(color, rank, homeSquare, hasMoved);
 	}
 
 }

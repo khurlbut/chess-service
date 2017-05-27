@@ -164,8 +164,6 @@ public class Piece {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
-            return false;
         Piece other = (Piece) obj;
         if (color != other.color)
             return false;
