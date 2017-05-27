@@ -49,16 +49,6 @@ final class BackingMap {
 		return new BackingMap(newBackingMapAfterPut(square, piece));
 	}
 
-//	BackingMap put(Square square, MovementTrackablePiece piece) {
-//		validatePutArgs(square, piece);
-//		return new BackingMap(newBackingMapAfterPut(square, piece));
-//	}
-//	
-//	BackingMap put(Square square, Pawn piece) {
-//		validatePutArgs(square, piece);
-//		return new BackingMap(newBackingMapAfterPut(square, piece));
-//	}
-
 	BackingMap move(Square source, Square target) {
 		validateMoveArgs(source, target);
 		return new BackingMap(newBackingMapAfterMoveOrCapture(source, target));
