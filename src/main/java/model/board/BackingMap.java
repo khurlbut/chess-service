@@ -1,15 +1,18 @@
 package model.board;
 
+import static model.piece.PieceFactory.newPiece;
+import static model.piece.PieceFactory.newPawn;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import model.enums.Color;
+import model.enums.Rank;
 import model.piece.MovementTrackablePiece;
 import model.piece.Pawn;
 import model.piece.Piece;
-import model.piece.PieceFactory;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -64,6 +67,17 @@ final class BackingMap {
 		return new BackingMap(newBackingMapAfterRemove(source));
 	}
 
+	BackingMap promote(Square source, Square target, Rank promoteTo) {
+		validateMoveArgs(source, target);
+		
+		if (promoteTo == null) {
+			promoteTo = Rank.Queen;
+		}
+		
+		return new BackingMap(newBackingMapAfterPromotion(source, target,
+				promoteTo));
+	}
+
 	private BackingMap(Map<Square, Piece> mutableMap) {
 		this.backingMap = new ImmutableMap.Builder<Square, Piece>().putAll(
 				mutableMap).build();
@@ -94,13 +108,29 @@ final class BackingMap {
 		return map;
 	}
 
+	private Map<Square, Piece> newBackingMapAfterPromotion(Square source,
+			Square target, Rank promoteTo) {
+		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
+		Piece p = getPieceAt(source);
+		
+		map.put(target, newPiece(p.color(), promoteTo, p.homeSquare()));
+		map.remove(source);
+		return map;
+	}
+	
+	private Map<Square, Piece> newBackingMapAfterRemove(Square square) {
+		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
+		map.remove(square);
+		return map;
+	}
+
 	private Piece trackMovement(Piece piece) {
 
 		if (pieceTracksMovement(piece) && pieceHasNotMoved(piece)) {
 			if (piece instanceof Pawn) {
-				piece = PieceFactory.newPawn((Pawn) piece);
+				piece = newPawn((Pawn) piece);
 			}
-			piece = PieceFactory.newPiece((MovementTrackablePiece) piece);
+			piece = newPiece((MovementTrackablePiece) piece);
 		}
 
 		return piece;
@@ -112,12 +142,6 @@ final class BackingMap {
 
 	private boolean pieceHasNotMoved(Piece p) {
 		return !((MovementTrackablePiece) p).hasMoved();
-	}
-
-	private Map<Square, Piece> newBackingMapAfterRemove(Square square) {
-		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
-		map.remove(square);
-		return map;
 	}
 
 	private boolean isOnBoard(Piece piece) {

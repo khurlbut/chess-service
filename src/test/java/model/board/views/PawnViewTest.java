@@ -4,6 +4,7 @@ import static model.board.Sugar.eventList;
 import static model.board.Sugar.play;
 import static model.board.Sugar.position;
 import static model.board.Sugar.put;
+import static model.board.Sugar.promote;
 import static model.board.Sugar.square;
 import static model.board.views.ViewSugar.pawnView;
 import static model.piece.PieceFactory.newPiece;
@@ -57,12 +58,27 @@ public class PawnViewTest {
     private final Square c_6 = square(Column.C, Row.R6);
     private final Square d_6 = square(Column.D, Row.R6);
     private final Square e_4 = square(Column.E, Row.R4);
+    private final Square e_7 = square(Column.E, Row.R7);
+    private final Square e_8 = square(Column.E, Row.R8);
 
     private ChessBoard chessBoard;
 
     @Before
     public void setUp() {
         chessBoard = new ChessBoard();
+    }
+    
+    @Test
+    public void it_promotes_when_reaching_end_of_board() {
+    	chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.Pawn, e_7));
+    	chessBoard = chessBoard.setBoardForGameInProgress();
+
+    	GameEvent move = promote(e_7, e_8);
+    	
+    	chessBoard = chessBoard.playEvent(move);
+    	
+    	Piece piece = chessBoard.pieceAt(e_8);
+    	assertThat(piece.rank(), equalTo(Rank.Queen));
     }
 
     @Test

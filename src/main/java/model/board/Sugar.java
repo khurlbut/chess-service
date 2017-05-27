@@ -35,6 +35,10 @@ public final class Sugar {
         return new CaptureEvent(attackingSquare, targetSquare, target);
     }
 
+    public static PromoteEvent promote(Square source, Square target) {
+        return new PromoteEvent(source, target);
+    }
+
     public static RemoveEvent remove(Square square) {
         return new RemoveEvent(square);
     }

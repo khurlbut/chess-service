@@ -66,6 +66,7 @@ public class RESTController {
 
 	private GameEvent getEvent(Square fromSquare, Square toSquare, Piece target) {
 
+		
 		if (target != null) {
 			return capture(fromSquare, toSquare, target);
 		} else {

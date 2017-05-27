@@ -7,6 +7,8 @@ import java.util.List;
 
 import model.board.views.RankView;
 import model.enums.Color;
+import model.enums.Rank;
+import model.enums.Row;
 import model.exceptions.ConstructorArgsException;
 import model.exceptions.IllegalGameEventException;
 import model.piece.Piece;
@@ -130,6 +132,28 @@ public class ChessBoard {
 		}
 	}
 
+	public ChessBoard promote(PromoteEvent promote) {
+		guard(promote);
+		return new ChessBoard(eventsList(promote), backingMap(promote),
+				boardIsSet);
+	}
+
+	private void guard(PromoteEvent promote) {
+		guard_BoardMustBeSet();
+		if (isNotLegalMove(promote)) {
+			throw new IllegalGameEventException("Move is Illegal!");
+		}
+		Piece p = pieceAt(promote.source());
+		if (p.rank() != Rank.Pawn) {
+			throw new IllegalGameEventException("Only Pawns may be Promoted!");
+		}
+		Row row = promote.source().row();
+		if (row != Row.R2 && row != Row.R7) {
+			throw new IllegalArgumentException(
+					"Pawn must be in row before edge of board to qualify for Promotion!");
+		}
+	}
+
 	private BackingMap backingMap(GameEvent event) {
 		switch (event.type()) {
 		case PUT:
@@ -140,6 +164,9 @@ public class ChessBoard {
 			return backingMap.move(event.source(), event.target());
 		case CAPTURE:
 			return backingMap.capture(event.source(), event.target());
+		case PROMOTE:
+			return backingMap.promote(event.source(), event.target(),
+					((PromoteEvent) event).promoteTo());
 		default:
 			throw new IllegalArgumentException("Event Type: " + event.type()
 					+ " Not Supported!");

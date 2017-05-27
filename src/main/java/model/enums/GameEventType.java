@@ -1,5 +1,5 @@
 package model.enums;
 
 public enum GameEventType {
-    PUT, MOVE, CAPTURE, REMOVE;
+    PUT, MOVE, CAPTURE, REMOVE, PROMOTE, CASTLE;
 }

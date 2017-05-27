@@ -1,21 +1,18 @@
 package model.board;
 
-import static model.enums.GameEventType.MOVE;
+import static model.enums.GameEventType.PROMOTE;
 import model.enums.GameEventType;
 import model.enums.Rank;
-import model.enums.Row;
-import model.exceptions.ConstructorArgsException;
-import model.piece.Piece;
 
-public class MoveEvent implements GameEvent {
+public class PromoteEvent extends MoveEvent implements GameEvent {
 
-    private Square source;
-    private Square target;
+    private final Square source;
+    private final Square target;
+    private final Rank promoteTo = null;
 
-    MoveEvent(Square source, Square target) {
-        if (source == null || target == null) {
-            throw new ConstructorArgsException("Constructor does not allow null(s)!");
-        }
+    PromoteEvent(Square source, Square target) {
+    	super(source, target);
+
         this.source = source;
         this.target = target;
     }
@@ -29,20 +26,14 @@ public class MoveEvent implements GameEvent {
     public Square target() {
         return target;
     }
+    
+    public Rank promoteTo() {
+    	return promoteTo;
+    }
 
     @Override
     public ChessBoard playEvent(ChessBoard chessBoard) {
-    	Piece movingPiece = chessBoard.pieceAt(source);
-    	Row targetRow = target.row();
-    	
-    	if (movingPiece.rank() == Rank.Pawn) { 
-    		if (targetRow == Row.R1 || targetRow == Row.R8){
-    			PromoteEvent promoteEvent = new PromoteEvent(source, target);
-    			return chessBoard.promote(promoteEvent);
-    		}
-    	}
-    	
-        return chessBoard.move(this);
+        return chessBoard.promote(this);
     }
 
     @Override
@@ -52,7 +43,7 @@ public class MoveEvent implements GameEvent {
 
     @Override
     public GameEventType type() {
-        return MOVE;
+        return PROMOTE;
     }
 
     @Override
@@ -72,7 +63,7 @@ public class MoveEvent implements GameEvent {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MoveEvent other = (MoveEvent) obj;
+        PromoteEvent other = (PromoteEvent) obj;
         if (source == null) {
             if (other.source != null)
                 return false;
