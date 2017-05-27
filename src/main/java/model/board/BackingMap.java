@@ -1,7 +1,6 @@
 package model.board;
 
 import static model.piece.PieceFactory.newPiece;
-import static model.piece.PieceFactory.newPawn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.Map;
 import model.enums.Color;
 import model.enums.Rank;
 import model.piece.MovementTrackablePiece;
-import model.piece.Pawn;
 import model.piece.Piece;
 
 import com.google.common.collect.ImmutableMap;
@@ -67,15 +65,12 @@ final class BackingMap {
 		return new BackingMap(newBackingMapAfterRemove(source));
 	}
 
-	BackingMap promote(Square source, Square target, Rank promoteTo) {
-		validateMoveArgs(source, target);
-		
+	BackingMap promote(Square source, Rank promoteTo) {
 		if (promoteTo == null) {
 			promoteTo = Rank.Queen;
 		}
 		
-		return new BackingMap(newBackingMapAfterPromotion(source, target,
-				promoteTo));
+		return new BackingMap(newBackingMapAfterPromotion(source, promoteTo));
 	}
 
 	private BackingMap(Map<Square, Piece> mutableMap) {
@@ -109,12 +104,12 @@ final class BackingMap {
 	}
 
 	private Map<Square, Piece> newBackingMapAfterPromotion(Square source,
-			Square target, Rank promoteTo) {
+			Rank promoteTo) {
 		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
 		Piece p = getPieceAt(source);
 		
-		map.put(target, newPiece(p.color(), promoteTo, p.homeSquare()));
 		map.remove(source);
+		map.put(source, newPiece(p.color(), promoteTo, p.homeSquare()));
 		return map;
 	}
 	
@@ -127,9 +122,6 @@ final class BackingMap {
 	private Piece trackMovement(Piece piece) {
 
 		if (pieceTracksMovement(piece) && pieceHasNotMoved(piece)) {
-			if (piece instanceof Pawn) {
-				piece = newPawn((Pawn) piece);
-			}
 			piece = newPiece((MovementTrackablePiece) piece);
 		}
 

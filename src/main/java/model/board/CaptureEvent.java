@@ -1,5 +1,7 @@
 package model.board;
 
+import static model.board.Sugar.isPromotion;
+import static model.board.Sugar.promote;
 import static model.enums.GameEventType.CAPTURE;
 import model.enums.GameEventType;
 import model.exceptions.ConstructorArgsException;
@@ -32,6 +34,9 @@ public class CaptureEvent implements GameEvent {
 
     @Override
     public ChessBoard playEvent(ChessBoard chessBoard) {
+		if (isPromotion(chessBoard.pieceAt(source), target.row)) {
+			chessBoard = chessBoard.promote(promote(source, target));
+		}
         return chessBoard.capture(this);
     }
 

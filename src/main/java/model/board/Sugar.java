@@ -65,5 +65,14 @@ public final class Sugar {
     public static boolean isCollaborator(Color color, Piece otherPiece) {
         return otherPiece != null && otherPiece.color().equals(color);
     }
+    
+    public static boolean isPromotion(Piece movingPiece, Row targetRow) {
+		if (movingPiece.rank() == Rank.Pawn) {
+			if (targetRow == Row.R1 || targetRow == Row.R8) {
+				return true;
+			}
+		}
+		return false;
+    }
 
 }

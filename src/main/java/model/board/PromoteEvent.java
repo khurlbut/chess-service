@@ -16,6 +16,13 @@ public class PromoteEvent extends MoveEvent implements GameEvent {
         this.source = source;
         this.target = target;
     }
+    
+    PromoteEvent(Square source, Square target, boolean isCapture) {
+    	super(source, target);
+
+    	this.source = source;
+    	this.target = target;
+    }
 
     @Override
     public Square source() {

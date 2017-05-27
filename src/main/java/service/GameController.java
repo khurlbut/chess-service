@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RESTController {
+public class GameController {
 	private static final String SERVICE_VERSION = "0.0.1";
 	private static final int GAME_NUMBER = 1;
 

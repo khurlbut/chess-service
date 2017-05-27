@@ -73,11 +73,11 @@ public class PawnViewTest {
     	chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.Pawn, e_7));
     	chessBoard = chessBoard.setBoardForGameInProgress();
 
-    	GameEvent move = promote(e_7, e_8);
+    	GameEvent promote = promote(e_7, e_8);
     	
-    	chessBoard = chessBoard.playEvent(move);
+    	chessBoard = chessBoard.playEvent(promote);
     	
-    	Piece piece = chessBoard.pieceAt(e_8);
+    	Piece piece = chessBoard.pieceAt(e_7);
     	assertThat(piece.rank(), equalTo(Rank.Queen));
     }
 

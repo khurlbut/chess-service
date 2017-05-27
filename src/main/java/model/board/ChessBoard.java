@@ -1,7 +1,6 @@
 package model.board;
 
 import static model.board.views.RankViewFactory.rankView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +117,25 @@ public class ChessBoard {
 		}
 	}
 
+	public ChessBoard promote(PromoteEvent promote) {
+		guard(promote);
+		return new ChessBoard(eventsList(promote), backingMap(promote),
+				boardIsSet);
+	}
+
+	private void guard(PromoteEvent promote) {
+		guard_BoardMustBeSet();
+		Piece p = pieceAt(promote.source());
+		if (p.rank() != Rank.Pawn) {
+			throw new IllegalGameEventException("Only Pawns may be Promoted!");
+		}
+		Row row = promote.source().row();
+		if (row != Row.R2 && row != Row.R7) {
+			throw new IllegalArgumentException(
+					"Pawn must be in row before edge of board to qualify for Promotion!");
+		}
+	}
+
 	ChessBoard remove(RemoveEvent remove) {
 		guard(remove);
 		return new ChessBoard(eventsList(remove), backingMap(remove),
@@ -132,28 +150,6 @@ public class ChessBoard {
 		}
 	}
 
-	public ChessBoard promote(PromoteEvent promote) {
-		guard(promote);
-		return new ChessBoard(eventsList(promote), backingMap(promote),
-				boardIsSet);
-	}
-
-	private void guard(PromoteEvent promote) {
-		guard_BoardMustBeSet();
-		if (isNotLegalMove(promote)) {
-			throw new IllegalGameEventException("Move is Illegal!");
-		}
-		Piece p = pieceAt(promote.source());
-		if (p.rank() != Rank.Pawn) {
-			throw new IllegalGameEventException("Only Pawns may be Promoted!");
-		}
-		Row row = promote.source().row();
-		if (row != Row.R2 && row != Row.R7) {
-			throw new IllegalArgumentException(
-					"Pawn must be in row before edge of board to qualify for Promotion!");
-		}
-	}
-
 	private BackingMap backingMap(GameEvent event) {
 		switch (event.type()) {
 		case PUT:
@@ -165,8 +161,7 @@ public class ChessBoard {
 		case CAPTURE:
 			return backingMap.capture(event.source(), event.target());
 		case PROMOTE:
-			return backingMap.promote(event.source(), event.target(),
-					((PromoteEvent) event).promoteTo());
+			return backingMap.promote(event.source(), ((PromoteEvent) event).promoteTo());
 		default:
 			throw new IllegalArgumentException("Event Type: " + event.type()
 					+ " Not Supported!");
