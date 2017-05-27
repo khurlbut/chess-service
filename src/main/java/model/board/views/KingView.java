@@ -14,6 +14,7 @@ import model.enums.Column;
 import model.enums.Row;
 import model.enums.TravelDistance;
 import model.enums.ViewVector;
+import model.piece.MovementTrackablePiece;
 import model.piece.Piece;
 
 public final class KingView extends RadiatingView {
@@ -78,13 +79,25 @@ public final class KingView extends RadiatingView {
 	}
 
 	private boolean kingAndRookHaveNotMoved(Column rookColumn, Row rookRow) {
-		Piece king = chessBoard.pieceAt(viewPoint);
+		Piece kingPiece = chessBoard.pieceAt(viewPoint);
+		Piece rookPiece = chessBoard.pieceAt(new Square(rookColumn, rookRow));
 
-		Square rookSquare = new Square(rookColumn, rookRow);
-		Piece rook = chessBoard.pieceAt(rookSquare);
+		if (kingPiece == null || rookPiece == null) {
+			return false;
+		}
+		if (!(kingPiece instanceof MovementTrackablePiece)) {
+			throw new IllegalArgumentException(
+					"King must be a MovementTrackable piece!");
+		}
+		if (!(rookPiece instanceof MovementTrackablePiece)) {
+			throw new IllegalArgumentException(
+					"Rook must be a MovementTrackable piece!");
+		}
 
-		if (king != null && !hasMoved(king, viewPoint) && rook != null
-				&& !hasMoved(rook, rookSquare)) {
+		MovementTrackablePiece king = (MovementTrackablePiece) kingPiece;
+		MovementTrackablePiece rook = (MovementTrackablePiece) rookPiece;
+
+		if (!king.hasMoved() && !rook.hasMoved()) {
 			return true;
 		}
 
