@@ -1,6 +1,5 @@
 package model.board.views;
 
-import static model.board.Sugar.hasMoved;
 import static model.board.Sugar.isCollaborator;
 
 import java.util.ArrayList;

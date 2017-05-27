@@ -58,10 +58,6 @@ public final class Sugar {
         return Arrays.asList(events);
     }
 
-    public static boolean hasMoved(Piece piece, Square squarePieceIsOn) {
-        return piece != null && !piece.homeSquare().equals(squarePieceIsOn);
-    }
-
     public static boolean isCollaborator(Color color, Piece otherPiece) {
         return otherPiece != null && otherPiece.color().equals(color);
     }
