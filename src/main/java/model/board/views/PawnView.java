@@ -13,6 +13,7 @@ import model.board.ChessBoard;
 import model.board.Square;
 import model.enums.Color;
 import model.enums.ViewVector;
+import model.piece.MovementTrackablePiece;
 import model.piece.Piece;
 
 public class PawnView implements RankView {
@@ -67,17 +68,13 @@ public class PawnView implements RankView {
             moveToSquares.add(oneStep);
 
             Piece thisPawn = chessBoard.pieceAt(viewPoint);
-            if (hasNotMoved(thisPawn)) {
+            if (!((MovementTrackablePiece) thisPawn).hasMoved()) {
                 Square twoSteps = oneStep.neighbor(pawnDirection);
                 if (chessBoard.pieceAt(twoSteps) == null) {
                     moveToSquares.add(twoSteps);
                 }
             }
         }
-    }
-
-    private boolean hasNotMoved(Piece thisPawn) {
-        return !hasMoved(thisPawn, viewPoint);
     }
 
     private ViewVector pawnDirection() {
