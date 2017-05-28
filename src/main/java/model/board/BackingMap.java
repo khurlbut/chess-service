@@ -60,17 +60,26 @@ final class BackingMap {
 		return new BackingMap(newBackingMapAfterMoveOrCapture(source, target));
 	}
 
-	BackingMap remove(Square source) {
-		validateRemoveArgs(source);
-		return new BackingMap(newBackingMapAfterRemove(source));
-	}
-
 	BackingMap promote(Square source, Rank promoteTo) {
 		if (promoteTo == null) {
 			promoteTo = Rank.Queen;
 		}
-		
+
 		return new BackingMap(newBackingMapAfterPromotion(source, promoteTo));
+	}
+
+	public BackingMap castle(Square source, Square target, Square rookSource,
+			Square rookTarget) {
+		validateMoveArgs(source, target);
+		validateMoveArgs(rookSource, rookTarget);
+		
+		return new BackingMap(newBackingMapAfterCastle(source, target,
+				rookSource, rookTarget));
+	}
+
+	BackingMap remove(Square source) {
+		validateRemoveArgs(source);
+		return new BackingMap(newBackingMapAfterRemove(source));
 	}
 
 	private BackingMap(Map<Square, Piece> mutableMap) {
@@ -107,12 +116,28 @@ final class BackingMap {
 			Rank promoteTo) {
 		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
 		Piece p = getPieceAt(source);
-		
+
 		map.remove(source);
 		map.put(source, newPiece(p.color(), promoteTo, p.homeSquare()));
 		return map;
 	}
-	
+
+	private Map<Square, Piece> newBackingMapAfterCastle(Square source,
+			Square target, Square rookSource, Square rookTarget) {
+		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
+
+		Piece king = map.get(source);
+		Piece rook = map.get(rookSource);
+
+		map.put(target, king);
+		map.put(rookTarget, rook);
+		
+		map.remove(source);
+		map.remove(rookSource);
+
+		return map;
+	}
+
 	private Map<Square, Piece> newBackingMapAfterRemove(Square square) {
 		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
 		map.remove(square);

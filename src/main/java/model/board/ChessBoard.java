@@ -1,6 +1,7 @@
 package model.board;
 
 import static model.board.views.RankViewFactory.rankView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import model.enums.Rank;
 import model.enums.Row;
 import model.exceptions.ConstructorArgsException;
 import model.exceptions.IllegalGameEventException;
+import model.piece.MovementTrackablePiece;
 import model.piece.Piece;
 
 public class ChessBoard {
@@ -136,6 +138,62 @@ public class ChessBoard {
 		}
 	}
 
+	public ChessBoard castle(CastleEvent castle) {
+		guard(castle);
+		return new ChessBoard(eventsList(castle), backingMap(castle),
+				boardIsSet);
+	}
+	
+	private void guard(CastleEvent castle) {
+		guard_BoardMustBeSet();
+		
+		MovementTrackablePiece king = king(castle);
+		MovementTrackablePiece rook = rook(castle);
+		
+		checkMovement(king, rook);
+		
+		if (!king.moveToSquares(this).contains(castle.getKingTarget())) {
+			throw new IllegalGameEventException("Move is Illegal!!");
+		}
+		if (!rook.moveToSquares(this).contains(castle.rookTarget())) {
+			throw new IllegalGameEventException("Move is Illegal!!");
+		}
+	}
+
+	private void checkMovement(MovementTrackablePiece king,
+			MovementTrackablePiece rook) {
+		if (king.hasMoved()) {
+			throw new IllegalGameEventException("Kings may not castle after moving!");
+		}
+		if (rook.hasMoved()) {
+			throw new IllegalGameEventException("Rooks may not castle after moving!");
+		}
+	}
+
+	private MovementTrackablePiece rook(CastleEvent castle) {
+		Piece p = pieceAt(castle.rookSource());
+		if (p == null) {
+			throw new IllegalGameEventException("Rook not found!");
+		}
+		if (p.rank() != Rank.Rook) {
+			throw new IllegalGameEventException("Kings may only castle with a Rook!");
+		}
+		MovementTrackablePiece rook = (MovementTrackablePiece) p;
+		return rook;
+	}
+
+	private MovementTrackablePiece king(CastleEvent castle) {
+		Piece p = pieceAt(castle.source());
+		if (p == null) {
+			throw new IllegalGameEventException("King not found!") ;
+		}
+		if (p == null || p.rank() != Rank.King) {
+			throw new IllegalGameEventException("Only Kings may Castle!") ;
+		}
+		MovementTrackablePiece king = (MovementTrackablePiece) p;
+		return king;
+	}
+	
 	ChessBoard remove(RemoveEvent remove) {
 		guard(remove);
 		return new ChessBoard(eventsList(remove), backingMap(remove),
@@ -153,15 +211,21 @@ public class ChessBoard {
 	private BackingMap backingMap(GameEvent event) {
 		switch (event.type()) {
 		case PUT:
-			return backingMap.put(event.target(), ((PutEvent) event).piece());
+			PutEvent pe = (PutEvent) event;
+			return backingMap.put(pe.target(), pe.piece());
 		case REMOVE:
 			return backingMap.remove(event.source());
 		case MOVE:
 			return backingMap.move(event.source(), event.target());
 		case CAPTURE:
-			return backingMap.capture(event.source(), event.target());
+			CaptureEvent ce = (CaptureEvent) event;
+			return backingMap.capture(ce.source(), ce.target());
 		case PROMOTE:
-			return backingMap.promote(event.source(), ((PromoteEvent) event).promoteTo());
+			PromoteEvent pr = (PromoteEvent) event;
+			return backingMap.promote(pr.source(), pr.promoteTo());
+		case CASTLE:
+			CastleEvent ca = (CastleEvent) event;
+			return backingMap.castle(ca.source(), ca.target(), ca.rookSource(), ca.rookTarget());
 		default:
 			throw new IllegalArgumentException("Event Type: " + event.type()
 					+ " Not Supported!");

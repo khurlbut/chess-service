@@ -9,6 +9,7 @@ import model.enums.Color;
 import model.enums.Column;
 import model.enums.Rank;
 import model.enums.Row;
+import model.piece.MovementTrackablePiece;
 import model.piece.Piece;
 
 public final class Sugar {
@@ -38,6 +39,41 @@ public final class Sugar {
     public static PromoteEvent promote(Square source, Square target) {
         return new PromoteEvent(source, target);
     }
+
+	public static boolean isCastle(Piece piece, Square source, Square target) {
+		if (piece.rank() == Rank.King) {
+			MovementTrackablePiece king = (MovementTrackablePiece) piece;
+			if (!king.hasMoved()) {
+				if (source.row() == target.row()) {
+					if (target.col() == Column.C || target.col() == Column.G) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static CastleEvent castle(Square source, Square target) {
+		Square rookSquare = findRookSquare(target);
+		Square rookTarget = findRookTarget(rookSquare);
+		return new CastleEvent(source, target,
+				rookSquare, rookTarget);
+	}
+	
+	private static Square findRookTarget(Square rookSquare) {
+		if (rookSquare.col() == Column.A) {
+			return square(Column.D, rookSquare.row());
+		}
+		return square(Column.F, rookSquare.row());
+	}
+
+	private static Square findRookSquare(Square target) {
+		if (target.col() == Column.C) {
+			return square(Column.A, target.row());
+		}
+		return square(Column.H, target.row());
+	}
 
     public static RemoveEvent remove(Square square) {
         return new RemoveEvent(square);

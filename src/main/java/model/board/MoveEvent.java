@@ -1,10 +1,13 @@
 package model.board;
 
+import static model.board.Sugar.isCastle;
+import static model.board.Sugar.castle;
 import static model.board.Sugar.isPromotion;
 import static model.board.Sugar.promote;
 import static model.enums.GameEventType.MOVE;
 import model.enums.GameEventType;
 import model.exceptions.ConstructorArgsException;
+import model.piece.Piece;
 
 public class MoveEvent implements GameEvent {
 
@@ -32,8 +35,12 @@ public class MoveEvent implements GameEvent {
 
 	@Override
 	public ChessBoard playEvent(ChessBoard chessBoard) {
-		if (isPromotion(chessBoard.pieceAt(source), target.row)) {
+		Piece movingPiece = chessBoard.pieceAt(source);
+		if (isPromotion(movingPiece, target.row)) {
 			chessBoard = chessBoard.promote(promote(source, target));
+		}
+		if (isCastle(movingPiece, source, target)) {
+			return chessBoard.castle(castle(source, target));
 		}
 		return chessBoard.move(this);
 	}
