@@ -36,8 +36,8 @@ public final class Sugar {
         return new CaptureEvent(attackingSquare, targetSquare, target);
     }
 
-    public static PromoteEvent promote(Square source, Square target) {
-        return new PromoteEvent(source, target);
+    public static PromoteEvent promote(Square source) {
+        return new PromoteEvent(source, Rank.Queen);
     }
 
 	public static boolean isCastle(Piece piece, Square source, Square target) {

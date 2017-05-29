@@ -35,7 +35,7 @@ public class CaptureEvent implements GameEvent {
     @Override
     public ChessBoard playEvent(ChessBoard chessBoard) {
 		if (isPromotion(chessBoard.pieceAt(source), target.row)) {
-			chessBoard = chessBoard.promote(promote(source, target));
+			chessBoard = chessBoard.promote(promote(source));
 		}
         return chessBoard.capture(this);
     }

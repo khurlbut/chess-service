@@ -2,6 +2,7 @@ package model.board;
 
 import static model.enums.GameEventType.CASTLE;
 import model.enums.GameEventType;
+import model.exceptions.ConstructorArgsException;
 
 public class CastleEvent extends MoveEvent {
 
@@ -13,6 +14,11 @@ public class CastleEvent extends MoveEvent {
 	CastleEvent(Square kingSource, Square kingTarget, Square rookSource, Square rookTarget) {
 		super(kingSource, kingTarget);
 
+		if (rookSource == null || rookTarget == null) {
+			throw new ConstructorArgsException(
+					"Constructor does not allow null(s)!");
+		}
+		
 		this.kingSource = kingSource;
 		this.kingTargettarget = kingTarget;
 		this.rookSource = rookSource;

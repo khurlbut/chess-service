@@ -3,25 +3,20 @@ package model.board;
 import static model.enums.GameEventType.PROMOTE;
 import model.enums.GameEventType;
 import model.enums.Rank;
+import model.exceptions.ConstructorArgsException;
 
-public class PromoteEvent extends MoveEvent implements GameEvent {
+public class PromoteEvent implements GameEvent {
 
     private final Square source;
-    private final Square target;
-    private final Rank promoteTo = null;
+    private final Rank promoteTo;
 
-    PromoteEvent(Square source, Square target) {
-    	super(source, target);
-
+    PromoteEvent(Square source, Rank promoteTo) {
+    	if (source == null || promoteTo == null){
+			throw new ConstructorArgsException(
+					"Constructor does not allow null(s)!");
+    	}
         this.source = source;
-        this.target = target;
-    }
-    
-    PromoteEvent(Square source, Square target, boolean isCapture) {
-    	super(source, target);
-
-    	this.source = source;
-    	this.target = target;
+        this.promoteTo = promoteTo;
     }
 
     @Override
@@ -31,7 +26,7 @@ public class PromoteEvent extends MoveEvent implements GameEvent {
 
     @Override
     public Square target() {
-        return target;
+        throw new UnsupportedOperationException("There is no target. Promotion happens in place.");
     }
     
     public Rank promoteTo() {
@@ -45,7 +40,7 @@ public class PromoteEvent extends MoveEvent implements GameEvent {
 
     @Override
     public String toString() {
-        return source + " --> " + target;
+        return source + " --> " + promoteTo;
     }
 
     @Override
@@ -58,7 +53,7 @@ public class PromoteEvent extends MoveEvent implements GameEvent {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((target == null) ? 0 : target.hashCode());
+        result = prime * result + ((promoteTo == null) ? 0 : promoteTo.hashCode());
         return result;
     }
 
@@ -76,10 +71,10 @@ public class PromoteEvent extends MoveEvent implements GameEvent {
                 return false;
         } else if (!source.equals(other.source))
             return false;
-        if (target == null) {
-            if (other.target != null)
+        if (promoteTo == null) {
+            if (other.promoteTo != null)
                 return false;
-        } else if (!target.equals(other.target))
+        } else if (!promoteTo.equals(other.promoteTo))
             return false;
         return true;
     }

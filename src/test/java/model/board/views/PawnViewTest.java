@@ -73,7 +73,7 @@ public class PawnViewTest {
     	chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.Pawn, e_7));
     	chessBoard = chessBoard.setBoardForGameInProgress();
 
-    	GameEvent promote = promote(e_7, e_8);
+    	GameEvent promote = promote(e_7);
     	
     	chessBoard = chessBoard.playEvent(promote);
     	

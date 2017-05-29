@@ -19,6 +19,7 @@ public class MoveEvent implements GameEvent {
 			throw new ConstructorArgsException(
 					"Constructor does not allow null(s)!");
 		}
+		
 		this.source = source;
 		this.target = target;
 	}
@@ -37,7 +38,7 @@ public class MoveEvent implements GameEvent {
 	public ChessBoard playEvent(ChessBoard chessBoard) {
 		Piece movingPiece = chessBoard.pieceAt(source);
 		if (isPromotion(movingPiece, target.row)) {
-			chessBoard = chessBoard.promote(promote(source, target));
+			chessBoard = chessBoard.promote(promote(source));
 		}
 		if (isCastle(movingPiece, source, target)) {
 			return chessBoard.castle(castle(source, target));
