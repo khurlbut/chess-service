@@ -100,67 +100,15 @@ public class ChessBoard {
 
 	ChessBoard move(MoveEvent move) {
 		guard(move);
-
-		ChessBoard chessBoard = new ChessBoard(eventsList(move),
-				backingMap(move), boardIsSet);
-
-		Piece p = chessBoard.pieceAt(move.target());
-		if (Rank.Pawn == p.rank() && pawnMovedTwoRows(move)) {
-			List<Square> squares = enPassantCandidates(move.target(), p.color());
-
-			for (Square s : squares) {
-				chessBoard = chessBoard.enPassantEnable(s);
-			}
-		}
-
-		return chessBoard;
+		return new ChessBoard(eventsList(move), backingMap(move), boardIsSet);
 	}
 
-	private boolean pawnMovedTwoRows(MoveEvent move) {
-		return Math.abs(targetRow(move) - sourceRow(move)) == 2;
-	}
-
-	private List<Square> enPassantCandidates(Square target, Color color) {
-		Square left = target.neighbor(LEFT);
-		Square right = target.neighbor(RIGHT);
-
-		List<Square> candidateSquares = new ArrayList<Square>();
-		if (isOpponentPawn(left, color)) {
-			candidateSquares.add(left);
-		}
-		if (isOpponentPawn(right, color)) {
-			candidateSquares.add(right);
-		}
-
-		return candidateSquares;
-	}
-
-	private boolean isOpponentPawn(Square square, Color color) {
-		Piece p = pieceAt(square);
-		if (p != null) {
-			Color opponentColor = color.opponentColor();
-			if (p.rank() == Rank.Pawn && p.color() == opponentColor) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private ChessBoard enPassantEnable(Square s) {
-		EnPassantEnableEvent e = new EnPassantEnableEvent(s);
+	ChessBoard enPassantEnable(EnPassantEnableEvent e) {
 		return new ChessBoard(eventsList(e), backingMap(e), boardIsSet);
 	}
 
-	public ChessBoard enPassantDisable(EnPassantDisableEvent e) {
+	ChessBoard enPassantDisable(EnPassantDisableEvent e) {
 		return new ChessBoard(eventsList(e), backingMap(e), boardIsSet);
-	}
-
-	private int sourceRow(MoveEvent move) {
-		return move.source().row().ordinal();
-	}
-
-	private int targetRow(MoveEvent move) {
-		return move.target().row().ordinal();
 	}
 
 	private void guard(MoveEvent move) {
@@ -185,15 +133,13 @@ public class ChessBoard {
 
 	public ChessBoard capture(EnPassantCaptureEvent enPassantCapture) {
 		guard(enPassantCapture);
-		
+
 		ChessBoard chessBoard = new ChessBoard(eventsList(enPassantCapture),
 				backingMap(enPassantCapture), boardIsSet);
-		
-		
-		
+
 		return chessBoard;
 	}
-	
+
 	private void guard(EnPassantCaptureEvent enPassantCapture) {
 		guard_BoardMustBeSet();
 		if (isNotLegalCapture(enPassantCapture)) {
@@ -307,7 +253,8 @@ public class ChessBoard {
 			return backingMap.capture(ce.source(), ce.target());
 		case EN_PASSANT_CAPTURE:
 			EnPassantCaptureEvent epce = (EnPassantCaptureEvent) event;
-			return backingMap.enPassantCapture(epce.source(), epce.target(), epce.captureSquare());
+			return backingMap.enPassantCapture(epce.source(), epce.target(),
+					epce.captureSquare());
 		case PROMOTE:
 			PromoteEvent pr = (PromoteEvent) event;
 			return backingMap.promote(pr.source(), pr.promoteTo());
@@ -375,15 +322,15 @@ public class ChessBoard {
 		return attackAtSquares(piece).squaresHoldingPiecesAttacked().contains(
 				event.target());
 	}
-	
+
 	private boolean isNotLegalCapture(CaptureEvent capture) {
 		return !isLegalCapture(capture);
 	}
 
 	private boolean isLegalCapture(EnPassantCaptureEvent event) {
 		Piece piece = pieceAt(event.source());
-		return attackAtSquares(piece).squaresHoldingPiecesAttacked().contains(event
-				.captureSquare());
+		return attackAtSquares(piece).squaresHoldingPiecesAttacked().contains(
+				event.captureSquare());
 	}
 
 	private boolean isNotLegalCapture(EnPassantCaptureEvent enPassantCapture) {

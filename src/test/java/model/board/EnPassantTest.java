@@ -1,5 +1,6 @@
 package model.board;
 
+import static model.board.EnPassantEnabler.enableNextMoveEnPassants;
 import static model.piece.PieceFactory.newPiece;
 import static org.junit.Assert.*;
 import static model.enums.Color.WHITE;
@@ -52,7 +53,8 @@ public class EnPassantTest {
 		assertFalse(blackPawn.hasEnPassantCapture());
 		
 		chessBoard = chessBoard.playEvent(MOVE_WHITE_PAWN);
-		
+		chessBoard = enableNextMoveEnPassants(MOVE_WHITE_PAWN, chessBoard);
+
 		blackPawn = (Pawn) chessBoard.pieceAt(d_4);
 		assertTrue(blackPawn.hasEnPassantCapture());
 	}
@@ -65,6 +67,7 @@ public class EnPassantTest {
 		assertFalse(blackPawn.hasEnPassantCapture());
 		
 		chessBoard = chessBoard.playEvent(MOVE_WHITE_PAWN);
+		chessBoard = enableNextMoveEnPassants(MOVE_WHITE_PAWN, chessBoard);
 		
 		blackPawn = (Pawn) chessBoard.pieceAt(f_4);
 		assertTrue(blackPawn.hasEnPassantCapture());
@@ -83,6 +86,7 @@ public class EnPassantTest {
 		assertFalse(blackPawnF.hasEnPassantCapture());
 		
 		chessBoard = chessBoard.playEvent(MOVE_WHITE_PAWN);
+		chessBoard = enableNextMoveEnPassants(MOVE_WHITE_PAWN, chessBoard);
 		
 		blackPawnD = (Pawn) chessBoard.pieceAt(d_4);
 		blackPawnF = (Pawn) chessBoard.pieceAt(f_4);

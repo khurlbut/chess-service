@@ -1,5 +1,7 @@
 package service;
 
+import static model.board.EnPassantEnabler.enableNextMoveEnPassants;
+import static model.board.EnPassantDisabler.disablePreviousMoveEnPassants;
 import static model.board.Sugar.capture;
 import static model.board.Sugar.enPassantCapture;
 import static model.board.Sugar.enPassantDisable;
@@ -10,7 +12,6 @@ import static service.BoardStateTranslator.boardToString;
 import static service.SquareTranslator.boardNumberToSquare;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import model.board.ChessBoard;
@@ -61,10 +62,12 @@ public class GameController {
 			checkColor(fromSquare);
 
 			GameEvent event = getEvent(fromSquare, toSquare);
+
 			board = board.playEvent(event);
-			
-			disableEnPassants();
-			
+
+			board = enableNextMoveEnPassants(event, board);
+			board = disablePreviousMoveEnPassants(board, movingColor);
+
 			movingColor = movingColor.opponentColor();
 
 		} catch (IllegalGameEventException e) {
@@ -78,9 +81,9 @@ public class GameController {
 	private void checkColor(Square fromSquare) {
 		Piece p = board.pieceAt(fromSquare);
 		if (p == null) {
-			return;
+			throw new IllegalGameEventException(
+					"Piece not found on source square!!");
 		}
-		
 		if (p.color() != movingColor) {
 			throw new IllegalGameEventException("Not your turn!");
 		}
@@ -89,41 +92,17 @@ public class GameController {
 	private GameEvent getEvent(Square fromSquare, Square toSquare) {
 		Piece moving = board.pieceAt(fromSquare);
 		Piece target = board.pieceAt(toSquare);
-		
+
 		if (isEnPassant(moving, fromSquare, toSquare)) {
 			Square captureSquare = enPassanteTarget(fromSquare, toSquare);
 			return enPassantCapture(fromSquare, toSquare, captureSquare);
-		} 
+		}
 		
 		if (target != null) {
 			return capture(fromSquare, toSquare, target);
-		} else {
-			return move(fromSquare, toSquare);
 		}
-	}
-
-	private void disableEnPassants() {
-		GameEvent event;
-		List<Piece> pieces = board.piecesFor(movingColor);
 		
-		for (Pawn pawn : enPassantEnabledPawns(pieces)) {
-			event = enPassantDisable(board.squareHolding(pawn));
-			board = event.playEvent(board);
-		}
+		return move(fromSquare, toSquare);
 	}
-	
-	private List<Pawn> enPassantEnabledPawns(List<Piece> pieces) {
-		List<Pawn> enPassantEnabledPawns = new ArrayList<Pawn>();
 
-		for (Piece p : pieces) {
-			if (p.rank() == Rank.Pawn) {
-				Pawn pawn = (Pawn) p;
-				if (pawn.hasEnPassantCapture()) {
-					enPassantEnabledPawns.add(pawn);
-				}
-			}
-		}
-		return enPassantEnabledPawns;
-	}
-	
 }

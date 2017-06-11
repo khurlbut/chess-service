@@ -28,7 +28,7 @@ public class EnPassantEnableEvent implements GameEvent {
 
 	@Override
 	public ChessBoard playEvent(ChessBoard chessBoard) {
-		return null;
+		return chessBoard.enPassantEnable(this);
 	}
 
 	@Override
