@@ -75,7 +75,7 @@ final class BackingMap {
 					"Attempted to Promote on an empty square!");
 		}
 		if (promoteTo == null) {
-			promoteTo = Rank.Queen;
+			promoteTo = Rank.QUEEN;
 		}
 
 		return new BackingMap(newBackingMapAfterPromotion(source, promoteTo));

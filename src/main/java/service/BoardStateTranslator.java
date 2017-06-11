@@ -37,7 +37,7 @@ public final class BoardStateTranslator {
         String compressedId;
         
         // Knight is a special case since K is used for King.
-        if (Rank.Knight.equals(p.rank())) {
+        if (Rank.KNIGHT.equals(p.rank())) {
             compressedId = p.toString().replace("K", "N");
         } else {
             compressedId = p.toString();

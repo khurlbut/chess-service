@@ -28,6 +28,7 @@ public class GameController {
 	private static final int GAME_NUMBER = 1;
 
 	private ChessBoard board = null;
+	private boolean gameIsOver = false;
 	private Color movingColor = Color.WHITE;
 
 	@CrossOrigin(origins = "http://localhost:3000")
@@ -49,6 +50,9 @@ public class GameController {
 			if (board == null) {
 				throw new IllegalGameEventException("Board is not set!");
 			}
+			if (gameIsOver) {
+				throw new IllegalGameEventException("Game is over!");
+			}
 
 			GameEvent event = getEvent(from, to, board);
 			
@@ -56,6 +60,10 @@ public class GameController {
 			
 			board = handleEvent(event, board);
 
+			if (isCheckMate()) {
+				gameIsOver = true;
+			}
+			
 			movingColor = movingColor.opponentColor();
 
 		} catch (IllegalGameEventException e) {
@@ -64,6 +72,10 @@ public class GameController {
 
 		return new Game(SERVICE_VERSION, GAME_NUMBER, boardToString(board));
 
+	}
+
+	private boolean isCheckMate() {
+		return false;
 	}
 
 	private void checkColor(Square fromSquare) {

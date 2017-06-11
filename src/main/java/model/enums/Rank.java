@@ -1,7 +1,7 @@
 package model.enums;
 
 public enum Rank {
-    Pawn("Pawn", 1), Rook("Rook", 5), Knight("Knight", 3), Bishop("Bishop", 4), Queen("Queen", 9), King("King", 20);
+    PAWN("Pawn", 1), ROOK("Rook", 5), KNIGHT("Knight", 3), BISHOP("Bishop", 4), QUEEN("Queen", 9), KING("King", 20);
 
     private final String title;
     private short value;

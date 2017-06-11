@@ -5,7 +5,7 @@ import static model.enums.Color.BLACK;
 import static model.enums.Color.WHITE;
 import static model.enums.Column.D;
 import static model.enums.Column.E;
-import static model.enums.Rank.Pawn;
+import static model.enums.Rank.PAWN;
 import static model.enums.Row.R2;
 import static model.enums.Row.R3;
 import static model.enums.Row.R4;
@@ -37,10 +37,10 @@ public class EventBuilderTest {
 	private static final Square E4 = new Square(E, R4);
 	private static final Square D5 = new Square(D, R5);
 
-	private static final Piece BLACK_PAWN_D5 = newPiece(BLACK, Pawn, D5);
+	private static final Piece BLACK_PAWN_D5 = newPiece(BLACK, PAWN, D5);
 
-	private static final PutEvent PUT_WHITE_PAWN_E4 = put(WHITE, Pawn, E4);
-	private static final PutEvent PUT_BLACK_PAWN_D5 = put(BLACK, Pawn, D5);
+	private static final PutEvent PUT_WHITE_PAWN_E4 = put(WHITE, PAWN, E4);
+	private static final PutEvent PUT_BLACK_PAWN_D5 = put(BLACK, PAWN, D5);
 	
 	@Test
 	public void it_creates_a_move_event() {

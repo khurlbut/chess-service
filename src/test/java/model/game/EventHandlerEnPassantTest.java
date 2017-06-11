@@ -7,7 +7,7 @@ import static model.enums.Column.C;
 import static model.enums.Column.D;
 import static model.enums.Column.E;
 import static model.enums.Column.F;
-import static model.enums.Rank.Pawn;
+import static model.enums.Rank.PAWN;
 import static model.enums.Row.R2;
 import static model.enums.Row.R3;
 import static model.enums.Row.R4;
@@ -32,11 +32,11 @@ public class EventHandlerEnPassantTest {
 	private static final Square E4 = new Square(E, R4);
 	private static final Square F4 = new Square(F, R4);
 
-	private static final Pawn WHITE_PAWN_E2 = (Pawn) newPiece(WHITE, Pawn, E2);
-	private static final Pawn WHITE_PAWN_C4 = (Pawn) newPiece(WHITE, Pawn, C4);
+	private static final Pawn WHITE_PAWN_E2 = (Pawn) newPiece(WHITE, PAWN, E2);
+	private static final Pawn WHITE_PAWN_C4 = (Pawn) newPiece(WHITE, PAWN, C4);
 
-	private static final Pawn BLACK_PAWN_D4 = (Pawn) newPiece(BLACK, Pawn, D4);
-	private static final Pawn BLACK_PAWN_F4 = (Pawn) newPiece(BLACK, Pawn, F4);
+	private static final Pawn BLACK_PAWN_D4 = (Pawn) newPiece(BLACK, PAWN, D4);
+	private static final Pawn BLACK_PAWN_F4 = (Pawn) newPiece(BLACK, PAWN, F4);
 
 	private static final MoveEvent MOVE_WHITE_PAWN_E2 = new MoveEvent(E2, E4);
 	private static final MoveEvent MOVE_BLACK_PAWN_D4 = new MoveEvent(D4, D3);

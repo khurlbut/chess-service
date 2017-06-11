@@ -20,17 +20,17 @@ public class RankViewFactory {
         BoardPosition position = new BoardPosition(viewPoint, chessBoard);
 
         switch (rank) {
-            case Pawn:
+            case PAWN:
                 return new PawnView(color, position);
-            case Rook:
+            case ROOK:
                 return new RookView(color, position);
-            case Knight:
+            case KNIGHT:
                 return new KnightView(color, position);
-            case Bishop:
+            case BISHOP:
                 return new BishopView(color, position);
-            case Queen:
+            case QUEEN:
                 return new QueenView(color, position);
-            case King:
+            case KING:
                 return new KingView(color, position);
             default:
                 throw new RuntimeException("This should never happen! Rank is: " + rank);

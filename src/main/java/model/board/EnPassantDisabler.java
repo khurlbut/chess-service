@@ -28,7 +28,7 @@ public final class EnPassantDisabler {
 		List<Pawn> enPassantEnabledPawns = new ArrayList<Pawn>();
 
 		for (Piece p : pieces) {
-			if (p.rank() == Rank.Pawn) {
+			if (p.rank() == Rank.PAWN) {
 				Pawn pawn = (Pawn) p;
 				if (pawn.hasEnPassantCapture()) {
 					enPassantEnabledPawns.add(pawn);

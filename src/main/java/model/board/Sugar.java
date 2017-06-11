@@ -43,11 +43,11 @@ public final class Sugar {
     }
 
     public static PromoteEvent promote(Square source) {
-        return new PromoteEvent(source, Rank.Queen);
+        return new PromoteEvent(source, Rank.QUEEN);
     }
 
 	public static boolean isCastle(Piece piece, Square source, Square target) {
-		if (piece.rank() == Rank.King) {
+		if (piece.rank() == Rank.KING) {
 			MovementTrackablePiece king = (MovementTrackablePiece) piece;
 			if (!king.hasMoved()) {
 				if (source.row() == target.row()) {
@@ -137,7 +137,7 @@ public final class Sugar {
     }
     
     public static boolean isPromotion(Piece movingPiece, Row targetRow) {
-		if (movingPiece.rank() == Rank.Pawn) {
+		if (movingPiece.rank() == Rank.PAWN) {
 			if (targetRow == Row.R1 || targetRow == Row.R8) {
 				return true;
 			}

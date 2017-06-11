@@ -5,6 +5,20 @@ import static model.board.Sugar.move;
 import static model.board.Sugar.put;
 import static model.board.Sugar.remove;
 import static model.board.Sugar.square;
+import static model.enums.Color.BLACK;
+import static model.enums.Color.WHITE;
+import static model.enums.Column.A;
+import static model.enums.Column.B;
+import static model.enums.Column.E;
+import static model.enums.Rank.BISHOP;
+import static model.enums.Rank.PAWN;
+import static model.enums.Rank.QUEEN;
+import static model.enums.Rank.ROOK;
+import static model.enums.Row.R1;
+import static model.enums.Row.R2;
+import static model.enums.Row.R3;
+import static model.enums.Row.R4;
+import static model.enums.Row.R7;
 import static model.piece.PieceFactory.newPiece;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -15,10 +29,6 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.enums.Color;
-import model.enums.Column;
-import model.enums.Rank;
-import model.enums.Row;
 import model.piece.Piece;
 
 import org.junit.Before;
@@ -29,13 +39,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ChessBoardTest {
 
-    private Square a_1 = square(Column.A, Row.R1);
-    private Square a_2 = square(Column.A, Row.R2);
-    private Square b_3 = square(Column.B, Row.R3);
-    private Square e_2 = square(Column.E, Row.R2);
-    private Square e_3 = square(Column.E, Row.R3);
-    private Square e_7 = square(Column.E, Row.R7);
-    private Square e_4 = square(Column.E, Row.R4);
+    private Square a_1 = square(A, R1);
+    private Square a_2 = square(A, R2);
+    private Square b_3 = square(B, R3);
+    private Square e_2 = square(E, R2);
+    private Square e_3 = square(E, R3);
+    private Square e_7 = square(E, R7);
+    private Square e_4 = square(E, R4);
 
     private Piece w_queen_e_3 = null;
     private Piece w_rook_a_1 = null;
@@ -55,13 +65,13 @@ public class ChessBoardTest {
 
     @Before
     public void setUp() {
-        w_pawn_a_2 = newPiece(Color.WHITE, Rank.Pawn, a_2);
-        w_pawn_e_2 = newPiece(Color.WHITE, Rank.Pawn, e_2);
-        b_pawn_b_3 = newPiece(Color.BLACK, Rank.Pawn, b_3);
-        b_pawn_e_7 = newPiece(Color.BLACK, Rank.Pawn, e_7);
-        w_rook_a_1 = newPiece(Color.WHITE, Rank.Rook, a_1);
-        w_bishop_a_1 = newPiece(Color.WHITE, Rank.Bishop, a_1);
-        w_queen_e_3 = newPiece(Color.WHITE, Rank.Queen, e_3);
+        w_pawn_a_2 = newPiece(WHITE, PAWN, a_2);
+        w_pawn_e_2 = newPiece(WHITE, PAWN, e_2);
+        b_pawn_b_3 = newPiece(BLACK, PAWN, b_3);
+        b_pawn_e_7 = newPiece(BLACK, PAWN, e_7);
+        w_rook_a_1 = newPiece(WHITE, ROOK, a_1);
+        w_bishop_a_1 = newPiece(WHITE, BISHOP, a_1);
+        w_queen_e_3 = newPiece(WHITE, QUEEN, e_3);
 
         put_w_rook_a_1 = put(w_rook_a_1);
         put_w_queen_e_3 = put(w_queen_e_3);
@@ -138,7 +148,7 @@ public class ChessBoardTest {
         assertThat(events.size(), equalTo(32));
 
         chessBoard = chessBoard.setBoardForGame();
-        MoveEvent move = move(e_2, square(Column.E, Row.R4));
+        MoveEvent move = move(e_2, square(E, R4));
 
         chessBoard = chessBoard.move(move);
         assertThat(chessBoard.gameEvents().size(), equalTo(33));
@@ -150,13 +160,13 @@ public class ChessBoardTest {
     @Test
     public void it_returns_a_list_of_pieces_by_color() {
         ChessBoard chessBoard = new BoardSetter().setBoard();
-        List<Piece> blackPieces = chessBoard.piecesFor(Color.BLACK);
+        List<Piece> blackPieces = chessBoard.piecesFor(BLACK);
 
         assertThat(blackPieces.size(), equalTo(16));
 
         List<Piece> uniquePieces = new ArrayList<Piece>();
         for (Piece piece : blackPieces) {
-            assertThat(piece.color(), equalTo(Color.BLACK));
+            assertThat(piece.color(), equalTo(BLACK));
             assertFalse(uniquePieces.contains(piece));
             uniquePieces.add(piece);
         }
@@ -187,7 +197,7 @@ public class ChessBoardTest {
 
     @Test(expected = IllegalStateException.class)
     public void playing_a_Move_event_before_the_board_has_been_set_throws_an_exception() {
-        Square a_3 = square(Column.A, Row.R3);
+        Square a_3 = square(A, R3);
         chessBoard = new ChessBoard().put(put(w_pawn_a_2));
         assertThat(chessBoard.boardIsSet(), equalTo(false));
 

@@ -10,8 +10,8 @@ public class RankTest {
 
     @Test
     public void rank_name_format_is_as_follows() {
-        Rank queen = Rank.Queen;
-        assertThat(queen.toString(), equalTo("Queen"));
+        Rank queen = Rank.QUEEN;
+        assertThat(queen.toString(), equalTo("QUEEN"));
     }
 
 }

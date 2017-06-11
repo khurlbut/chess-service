@@ -29,7 +29,7 @@ public class BoardStateTranslatorTest {
 
 	@Test
 	public void translator_can_retrieve_the_compressed_id_from_a_piece() {
-		Piece q = newPiece(Color.BLACK, Rank.Queen,
+		Piece q = newPiece(Color.BLACK, Rank.QUEEN,
 				new Square(Column.A, Row.R8));
 		assertThat(compressedIdOf(q), equalTo(BLACK_QUEEN));
 	}

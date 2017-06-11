@@ -69,7 +69,7 @@ public class PawnViewTest {
     
     @Test
     public void it_promotes_when_reaching_end_of_board() {
-    	chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.Pawn, e_7));
+    	chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.PAWN, e_7));
     	chessBoard = chessBoard.setBoardForGameInProgress();
 
     	GameEvent promote = promote(e_7);
@@ -77,12 +77,12 @@ public class PawnViewTest {
     	chessBoard = chessBoard.playEvent(promote);
     	
     	Piece piece = chessBoard.pieceAt(e_7);
-    	assertThat(piece.rank(), equalTo(Rank.Queen));
+    	assertThat(piece.rank(), equalTo(Rank.QUEEN));
     }
 
     @Test
     public void it_finds_move_to_squares() {
-        chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.Pawn, e_2));
+        chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.PAWN, e_2));
 
         w_pawnView_e_2 = newPawnView(Color.WHITE, Column.E, Row.R2);
 
@@ -95,7 +95,7 @@ public class PawnViewTest {
 
     @Test
     public void it_finds_threatened_squares() {
-        chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.Pawn, e_2));
+        chessBoard = chessBoard.playEvent(put(Color.WHITE, Rank.PAWN, e_2));
 
         w_pawnView_e_2 = newPawnView(Color.WHITE, Column.E, Row.R2);
 
@@ -137,15 +137,15 @@ public class PawnViewTest {
     }
 
     private ChessBoard putBlackPawnsInBoxAround_E_4() {
-    	Piece b_pawn_e_2 = newPiece(Color.BLACK, Rank.Pawn, e_2);
-        Piece b_pawn_e_5 = newPiece(Color.BLACK, Rank.Pawn, e_5);
-        Piece b_pawn_f_5 = newPiece(Color.BLACK, Rank.Pawn, f_5);
-        Piece b_pawn_f_4 = newPiece(Color.BLACK, Rank.Pawn, f_4);
-        Piece b_pawn_f_3 = newPiece(Color.BLACK, Rank.Pawn, f_3);
-        Piece b_pawn_e_3 = newPiece(Color.BLACK, Rank.Pawn, e_3);
-        Piece b_pawn_d_3 = newPiece(Color.BLACK, Rank.Pawn, d_3);
-        Piece b_pawn_d_4 = newPiece(Color.BLACK, Rank.Pawn, d_4);
-        Piece b_pawn_d_5 = newPiece(Color.BLACK, Rank.Pawn, d_5);
+    	Piece b_pawn_e_2 = newPiece(Color.BLACK, Rank.PAWN, e_2);
+        Piece b_pawn_e_5 = newPiece(Color.BLACK, Rank.PAWN, e_5);
+        Piece b_pawn_f_5 = newPiece(Color.BLACK, Rank.PAWN, f_5);
+        Piece b_pawn_f_4 = newPiece(Color.BLACK, Rank.PAWN, f_4);
+        Piece b_pawn_f_3 = newPiece(Color.BLACK, Rank.PAWN, f_3);
+        Piece b_pawn_e_3 = newPiece(Color.BLACK, Rank.PAWN, e_3);
+        Piece b_pawn_d_3 = newPiece(Color.BLACK, Rank.PAWN, d_3);
+        Piece b_pawn_d_4 = newPiece(Color.BLACK, Rank.PAWN, d_4);
+        Piece b_pawn_d_5 = newPiece(Color.BLACK, Rank.PAWN, d_5);
 
         PutEvent put_b_pawn_e_2 = put(b_pawn_e_2);
         PutEvent put_b_pawn_e_5 = put(b_pawn_e_5);
@@ -165,23 +165,23 @@ public class PawnViewTest {
     }
 
     private ChessBoard putBlackPawnsInBoxWithRadiousTwoAround_E_4() {
-        Piece b_pawn_e_7 = newPiece(Color.BLACK, Rank.Pawn, e_7);
-        Piece b_pawn_e_6 = newPiece(Color.BLACK, Rank.Pawn, e_6);
-        Piece b_pawn_f_6 = newPiece(Color.BLACK, Rank.Pawn, f_6);
-        Piece b_pawn_g_6 = newPiece(Color.BLACK, Rank.Pawn, g_6);
-        Piece b_pawn_g_5 = newPiece(Color.BLACK, Rank.Pawn, g_5);
-        Piece b_pawn_g_4 = newPiece(Color.BLACK, Rank.Pawn, g_4);
-        Piece b_pawn_g_3 = newPiece(Color.BLACK, Rank.Pawn, g_3);
-        Piece b_pawn_g_2 = newPiece(Color.BLACK, Rank.Pawn, g_2);
-        Piece b_pawn_f_2 = newPiece(Color.BLACK, Rank.Pawn, f_2);
-        Piece b_pawn_e_2 = newPiece(Color.BLACK, Rank.Pawn, e_2);
-        Piece b_pawn_d_2 = newPiece(Color.BLACK, Rank.Pawn, d_2);
-        Piece b_pawn_c_2 = newPiece(Color.BLACK, Rank.Pawn, c_2);
-        Piece b_pawn_c_3 = newPiece(Color.BLACK, Rank.Pawn, c_3);
-        Piece b_pawn_c_4 = newPiece(Color.BLACK, Rank.Pawn, c_4);
-        Piece b_pawn_c_5 = newPiece(Color.BLACK, Rank.Pawn, c_5);
-        Piece b_pawn_c_6 = newPiece(Color.BLACK, Rank.Pawn, c_6);
-        Piece b_pawn_d_6 = newPiece(Color.BLACK, Rank.Pawn, d_6);
+        Piece b_pawn_e_7 = newPiece(Color.BLACK, Rank.PAWN, e_7);
+        Piece b_pawn_e_6 = newPiece(Color.BLACK, Rank.PAWN, e_6);
+        Piece b_pawn_f_6 = newPiece(Color.BLACK, Rank.PAWN, f_6);
+        Piece b_pawn_g_6 = newPiece(Color.BLACK, Rank.PAWN, g_6);
+        Piece b_pawn_g_5 = newPiece(Color.BLACK, Rank.PAWN, g_5);
+        Piece b_pawn_g_4 = newPiece(Color.BLACK, Rank.PAWN, g_4);
+        Piece b_pawn_g_3 = newPiece(Color.BLACK, Rank.PAWN, g_3);
+        Piece b_pawn_g_2 = newPiece(Color.BLACK, Rank.PAWN, g_2);
+        Piece b_pawn_f_2 = newPiece(Color.BLACK, Rank.PAWN, f_2);
+        Piece b_pawn_e_2 = newPiece(Color.BLACK, Rank.PAWN, e_2);
+        Piece b_pawn_d_2 = newPiece(Color.BLACK, Rank.PAWN, d_2);
+        Piece b_pawn_c_2 = newPiece(Color.BLACK, Rank.PAWN, c_2);
+        Piece b_pawn_c_3 = newPiece(Color.BLACK, Rank.PAWN, c_3);
+        Piece b_pawn_c_4 = newPiece(Color.BLACK, Rank.PAWN, c_4);
+        Piece b_pawn_c_5 = newPiece(Color.BLACK, Rank.PAWN, c_5);
+        Piece b_pawn_c_6 = newPiece(Color.BLACK, Rank.PAWN, c_6);
+        Piece b_pawn_d_6 = newPiece(Color.BLACK, Rank.PAWN, d_6);
 
         PutEvent put_b_pawn_e_7 = put(b_pawn_e_7);
         PutEvent put_b_pawn_e_6 = put(b_pawn_e_6);

@@ -76,7 +76,7 @@ public class BackingMapTest {
 	@Test
 	public void it_can_move_and_update_a_movement_trackable_piece() {
 		when(movementTrackablePiece.color()).thenReturn(Color.WHITE);
-		when(movementTrackablePiece.rank()).thenReturn(Rank.King);
+		when(movementTrackablePiece.rank()).thenReturn(Rank.KING);
 		when(movementTrackablePiece.homeSquare()).thenReturn(square1);
 		when(movementTrackablePiece.hasMoved()).thenReturn(false);
 		

@@ -156,7 +156,7 @@ public class ChessBoard {
 	private void guard(PromoteEvent promote) {
 		guard_BoardMustBeSet();
 		Piece p = pieceAt(promote.source());
-		if (p.rank() != Rank.Pawn) {
+		if (p.rank() != Rank.PAWN) {
 			throw new IllegalGameEventException("Only Pawns may be Promoted!");
 		}
 		Row row = promote.source().row();
@@ -205,7 +205,7 @@ public class ChessBoard {
 		if (p == null) {
 			throw new IllegalGameEventException("Rook not found!");
 		}
-		if (p.rank() != Rank.Rook) {
+		if (p.rank() != Rank.ROOK) {
 			throw new IllegalGameEventException(
 					"Kings may only castle with a Rook!");
 		}
@@ -218,7 +218,7 @@ public class ChessBoard {
 		if (p == null) {
 			throw new IllegalGameEventException("King not found!");
 		}
-		if (p == null || p.rank() != Rank.King) {
+		if (p == null || p.rank() != Rank.KING) {
 			throw new IllegalGameEventException("Only Kings may Castle!");
 		}
 		MovementTrackablePiece king = (MovementTrackablePiece) p;

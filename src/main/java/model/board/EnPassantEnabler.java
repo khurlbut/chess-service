@@ -16,7 +16,7 @@ public final class EnPassantEnabler {
 		if (event instanceof MoveEvent) {
 			MoveEvent move = (MoveEvent) event;
 			Piece p = chessBoard.pieceAt(event.target());
-			if (Rank.Pawn == p.rank() && pawnMovedTwoRows(move)) {
+			if (Rank.PAWN == p.rank() && pawnMovedTwoRows(move)) {
 				List<Square> squares = enPassantCandidates(move.target(),
 						p.color(), chessBoard);
 
@@ -61,7 +61,7 @@ public final class EnPassantEnabler {
 		Piece p = chessBoard.pieceAt(square);
 		if (p != null) {
 			Color opponentColor = color.opponentColor();
-			if (p.rank() == Rank.Pawn && p.color() == opponentColor) {
+			if (p.rank() == Rank.PAWN && p.color() == opponentColor) {
 				return true;
 			}
 		}

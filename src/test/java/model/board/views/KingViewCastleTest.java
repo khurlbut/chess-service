@@ -88,36 +88,36 @@ public class KingViewCastleTest {
 	@Test
 	public void it_can_not_castle_on_col_A1_rook_if_rook_is_not_on_square() {
 		List<Square> moveToSquares = attempt_castle_without_rook(Color.WHITE,
-				Rank.King, e_1);
+				Rank.KING, e_1);
 		assertFalse(moveToSquares.contains(c_1));
 	}
 
 	@Test
 	public void it_can_not_castle_with_A8_rook_if_rook_is_not_on_square() {
 		List<Square> moveToSquares = attempt_castle_without_rook(Color.BLACK,
-				Rank.King, e_8);
+				Rank.KING, e_8);
 		assertFalse(moveToSquares.contains(c_8));
 	}
 
 	@Test
 	public void it_can_not_castle_on_col_H1_rook_if_rook_is_not_on_square() {
 		List<Square> moveToSquares = attempt_castle_without_rook(Color.WHITE,
-				Rank.King, e_1);
+				Rank.KING, e_1);
 		assertFalse(moveToSquares.contains(g_1));
 	}
 
 	@Test
 	public void it_can_not_castle_with_H8_rook_if_rook_is_not_on_square() {
 		List<Square> moveToSquares = attempt_castle_without_rook(Color.BLACK,
-				Rank.King, e_8);
+				Rank.KING, e_8);
 		assertFalse(moveToSquares.contains(g_8));
 	}
 
 	@Test
 	public void it_finds_the_right_number_of_move_to_squares() {
-		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
-		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
-		PutEvent put_rook_h = put(newPiece(Color.WHITE, Rank.Rook, h_1));
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.KING, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.ROOK, a_1));
+		PutEvent put_rook_h = put(newPiece(Color.WHITE, Rank.ROOK, h_1));
 
 		List<GameEvent> putEvents = eventList(put_king, put_rook_a, put_rook_h);
 		chessBoard = play(putEvents, chessBoard);
@@ -137,9 +137,9 @@ public class KingViewCastleTest {
 
 	@Test
 	public void it_can_not_pass_through_check_when_castling() {
-		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
-		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
-		PutEvent put_rook_d_2 = put(newPiece(Color.BLACK, Rank.Rook, d_2));
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.KING, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.ROOK, a_1));
+		PutEvent put_rook_d_2 = put(newPiece(Color.BLACK, Rank.ROOK, d_2));
 
 		List<GameEvent> putEvents = eventList(put_king, put_rook_a,
 				put_rook_d_2);
@@ -151,8 +151,8 @@ public class KingViewCastleTest {
 	
 	@Test
 	public void it_can_not_castle_after_king_has_moved() {
-		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
-		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.KING, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.ROOK, a_1));
 		MoveEvent move_king_over = move(e_1, d_1);
 		MoveEvent move_king_back = move(d_1, e_1);
 		
@@ -174,8 +174,8 @@ public class KingViewCastleTest {
 	
 	@Test
 	public void it_can_not_castle_after_rook_has_moved() {		
-		PutEvent put_king = put(newPiece(Color.WHITE, Rank.King, e_1));
-		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.Rook, a_1));
+		PutEvent put_king = put(newPiece(Color.WHITE, Rank.KING, e_1));
+		PutEvent put_rook_a = put(newPiece(Color.WHITE, Rank.ROOK, a_1));
 		MoveEvent move_rook_over = move(a_1, c_1);
 		MoveEvent move_rook_back = move(c_1, a_1);
 		
@@ -196,8 +196,8 @@ public class KingViewCastleTest {
 	}
 
 	private List<Square> setup_castle(Color color, Square kingSquare, Square rookSquare) {
-		PutEvent put_king = put(newPiece(color, Rank.King, kingSquare));
-		PutEvent put_rook = put(newPiece(color, Rank.Rook, rookSquare));
+		PutEvent put_king = put(newPiece(color, Rank.KING, kingSquare));
+		PutEvent put_rook = put(newPiece(color, Rank.ROOK, rookSquare));
 
 		List<GameEvent> putEvents = eventList(put_king, put_rook);
 		chessBoard = play(putEvents, chessBoard);
