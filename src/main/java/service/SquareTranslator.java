@@ -9,11 +9,19 @@ public final class SquareTranslator {
 	private static final int COLUMNS_PER_ROW = 8;
 	
 	public static final Square boardNumberToSquare(String boardNumber) {
-		int n = new Integer(boardNumber);
-		int row = n / COLUMNS_PER_ROW;
-		int col = n % COLUMNS_PER_ROW;
+		if (boardNumber == null) {
+			throw new IllegalArgumentException("Paramaters must not be null!");
+		}
 		
-		return new Square(column(col), row(row));
+		int n = new Integer(boardNumber);
+		Column col = column(n % COLUMNS_PER_ROW);
+		Row row = row(n / COLUMNS_PER_ROW);
+		
+		if (col == null || row == null) {
+			throw new IllegalArgumentException("Invalid Board Number " +boardNumber+ "!");
+		}
+		
+		return new Square(col, row);
 	}
 
 	private static Row row(int row) {

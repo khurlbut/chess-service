@@ -90,13 +90,17 @@ final class BackingMap {
 				rookSource, rookTarget));
 	}
 
-	public BackingMap enPassantEnable(Square source) {
+	public BackingMap enPassantEnable(Square source, Square target) {
 		if (isNotOccupied(source)) {
 			throw new IllegalArgumentException(
-					"Attempted to enable En Passant on an empty square!");
+					"Attempted to enable En Passant on an empty source!");
+		}
+		if (isNotOccupied(target)) {
+			throw new IllegalArgumentException(
+					"Attempted to enable En Passant on an empty target!");
 		}
 
-		return new BackingMap(newBackingMapAfterEnPassantEnabled(source));
+		return new BackingMap(newBackingMapAfterEnPassantEnabled(source, target));
 	}
 
 	public BackingMap enPassantDisable(Square source) {
@@ -179,12 +183,12 @@ final class BackingMap {
 		return map;
 	}
 
-	private Map<Square, Piece> newBackingMapAfterEnPassantEnabled(Square source) {
+	private Map<Square, Piece> newBackingMapAfterEnPassantEnabled(Square source, Square target) {
 		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
 		Pawn p = (Pawn) getPieceAt(source);
 
 		map.remove(source);
-		map.put(source, newEnPassantEnabledPawn(p));
+		map.put(source, newEnPassantEnabledPawn(p, target));
 		return map;
 	}
 

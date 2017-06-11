@@ -16,7 +16,7 @@ public class MoveEvent implements GameEvent {
 	private Square source;
 	private Square target;
 
-	MoveEvent(Square source, Square target) {
+	public MoveEvent(Square source, Square target) {
 		if (source == null || target == null) {
 			throw new ConstructorArgsException(
 					"Constructor does not allow null(s)!");

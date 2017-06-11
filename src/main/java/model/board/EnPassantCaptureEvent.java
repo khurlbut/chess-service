@@ -11,7 +11,7 @@ public class EnPassantCaptureEvent implements GameEvent {
     private Square target;
     private Square captureSquare;
 
-    EnPassantCaptureEvent(Square source, Square target, Square captureSquare) {
+    public EnPassantCaptureEvent(Square source, Square target, Square captureSquare) {
         if (source == null || target == null || captureSquare == null) {
             throw new ConstructorArgsException("Constructor does not allow null(s)!");
         }

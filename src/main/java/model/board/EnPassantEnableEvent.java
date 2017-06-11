@@ -7,18 +7,20 @@ import model.exceptions.ConstructorArgsException;
 public class EnPassantEnableEvent implements GameEvent {
 
 	private Square source;
+	private Square target;
 
-	public EnPassantEnableEvent(Square source) {
+	public EnPassantEnableEvent(Square source, Square target) {
     	if (source == null || source == null){
 			throw new ConstructorArgsException(
 					"Constructor does not allow null(s)!");
     	}
 		this.source = source;
+		this.target = target;
 	}
 
 	@Override
 	public Square target() {
-        throw new UnsupportedOperationException("There is no target. EnPassant Enablement in place.");
+        return target;
 	}
 
 	@Override

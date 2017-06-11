@@ -21,7 +21,7 @@ public final class EnPassantEnabler {
 						p.color(), chessBoard);
 
 				for (Square s : squares) {
-					EnPassantEnableEvent e = new EnPassantEnableEvent(s);
+					EnPassantEnableEvent e = new EnPassantEnableEvent(s, move.target());
 					chessBoard = e.playEvent(chessBoard);
 				}
 			}

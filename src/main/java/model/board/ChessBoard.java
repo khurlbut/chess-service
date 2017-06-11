@@ -264,7 +264,7 @@ public class ChessBoard {
 					ca.rookTarget());
 		case EN_PASSANT_ENABLE:
 			EnPassantEnableEvent ep = ((EnPassantEnableEvent) event);
-			return backingMap.enPassantEnable(ep.source());
+			return backingMap.enPassantEnable(ep.source(), ep.target());
 		case EN_PASSANT_DISABLE:
 			EnPassantDisableEvent dis = ((EnPassantDisableEvent) event);
 			return backingMap.enPassantDisable(dis.source());
@@ -329,7 +329,8 @@ public class ChessBoard {
 
 	private boolean isLegalCapture(EnPassantCaptureEvent event) {
 		Piece piece = pieceAt(event.source());
-		return attackAtSquares(piece).squaresHoldingPiecesAttacked().contains(
+		boolean hasEnPassant = ((Pawn) piece).hasEnPassantCapture(event.captureSquare());
+		return hasEnPassant && attackAtSquares(piece).squaresHoldingPiecesAttacked().contains(
 				event.captureSquare());
 	}
 

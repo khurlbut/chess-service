@@ -32,13 +32,13 @@ public class PieceFactory {
 		return newPiece(piece.color(), piece.rank(), piece.homeSquare(), true);
 	}
 	
-	public static Piece newEnPassantEnabledPawn(Pawn pawn) {
-		return new Pawn(pawn, true);
+	public static Piece newEnPassantEnabledPawn(Pawn pawn, Square target) {
+		return new Pawn(pawn, target);
 	}
 	
 
 	public static Piece newEnPassantDisabledPawn(Pawn pawn) {
-		return new Pawn(pawn, false);
+		return new Pawn(pawn, null);
 	}
 
 

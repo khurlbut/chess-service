@@ -1,26 +1,19 @@
 package service;
 
-import static model.board.EnPassantEnabler.enableNextMoveEnPassants;
-import static model.board.EnPassantDisabler.disablePreviousMoveEnPassants;
 import static model.board.Sugar.capture;
 import static model.board.Sugar.enPassantCapture;
-import static model.board.Sugar.enPassantDisable;
 import static model.board.Sugar.enPassanteTarget;
 import static model.board.Sugar.isEnPassant;
 import static model.board.Sugar.move;
+import static model.game.EventBuilder.getEvent;
+import static model.game.EventHandler.handleEvent;
 import static service.BoardStateTranslator.boardToString;
 import static service.SquareTranslator.boardNumberToSquare;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import model.board.ChessBoard;
 import model.board.GameEvent;
 import model.board.Square;
 import model.enums.Color;
-import model.enums.Rank;
 import model.exceptions.IllegalGameEventException;
-import model.piece.Pawn;
 import model.piece.Piece;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,8 +33,10 @@ public class GameController {
 	@CrossOrigin(origins = "http://localhost:3000")
 	@RequestMapping(value = "/game", method = RequestMethod.GET)
 	public Game getGame() {
+		
 		board = new ChessBoard().setBoardForGame();
 		movingColor = Color.WHITE;
+		
 		return new Game(SERVICE_VERSION, GAME_NUMBER, boardToString(board));
 	}
 
@@ -52,21 +47,14 @@ public class GameController {
 
 		try {
 			if (board == null) {
-				board = new ChessBoard();
 				throw new IllegalGameEventException("Board is not set!");
 			}
 
-			Square fromSquare = boardNumberToSquare(from);
-			Square toSquare = boardNumberToSquare(to);
-
-			checkColor(fromSquare);
-
-			GameEvent event = getEvent(fromSquare, toSquare);
-
-			board = board.playEvent(event);
-
-			board = enableNextMoveEnPassants(event, board);
-			board = disablePreviousMoveEnPassants(board, movingColor);
+			GameEvent event = getEvent(from, to, board);
+			
+			checkColor(event.source());
+			
+			board = handleEvent(event, board);
 
 			movingColor = movingColor.opponentColor();
 
@@ -87,22 +75,6 @@ public class GameController {
 		if (p.color() != movingColor) {
 			throw new IllegalGameEventException("Not your turn!");
 		}
-	}
-
-	private GameEvent getEvent(Square fromSquare, Square toSquare) {
-		Piece moving = board.pieceAt(fromSquare);
-		Piece target = board.pieceAt(toSquare);
-
-		if (isEnPassant(moving, fromSquare, toSquare)) {
-			Square captureSquare = enPassanteTarget(fromSquare, toSquare);
-			return enPassantCapture(fromSquare, toSquare, captureSquare);
-		}
-		
-		if (target != null) {
-			return capture(fromSquare, toSquare, target);
-		}
-		
-		return move(fromSquare, toSquare);
 	}
 
 }
