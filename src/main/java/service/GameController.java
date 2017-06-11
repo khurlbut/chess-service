@@ -1,19 +1,19 @@
 package service;
 
-import static model.board.Sugar.capture;
-import static model.board.Sugar.enPassantCapture;
-import static model.board.Sugar.enPassanteTarget;
-import static model.board.Sugar.isEnPassant;
-import static model.board.Sugar.move;
 import static model.game.EventBuilder.getEvent;
 import static model.game.EventHandler.handleEvent;
 import static service.BoardStateTranslator.boardToString;
-import static service.SquareTranslator.boardNumberToSquare;
+import static model.enums.Rank.KING;
+
+import java.util.List;
+
 import model.board.ChessBoard;
 import model.board.GameEvent;
 import model.board.Square;
 import model.enums.Color;
+import model.enums.Rank;
 import model.exceptions.IllegalGameEventException;
+import model.game.EventHandler;
 import model.piece.Piece;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,10 +34,11 @@ public class GameController {
 	@CrossOrigin(origins = "http://localhost:3000")
 	@RequestMapping(value = "/game", method = RequestMethod.GET)
 	public Game getGame() {
-		
+
 		board = new ChessBoard().setBoardForGame();
 		movingColor = Color.WHITE;
-		
+		gameIsOver = false;
+
 		return new Game(SERVICE_VERSION, GAME_NUMBER, boardToString(board));
 	}
 
@@ -55,15 +56,21 @@ public class GameController {
 			}
 
 			GameEvent event = getEvent(from, to, board);
-			
+
 			checkColor(event.source());
-			
+
 			board = handleEvent(event, board);
 
-			if (isCheckMate()) {
-				gameIsOver = true;
+			Piece opponentKing = findOpponentKing();
+
+			if (isCheck(opponentKing)) {
+				System.out.println("Check!");
+				if (isCheckMate()) {
+					System.out.println("Check Mate!");
+					gameIsOver = true;
+				}
 			}
-			
+
 			movingColor = movingColor.opponentColor();
 
 		} catch (IllegalGameEventException e) {
@@ -74,8 +81,45 @@ public class GameController {
 
 	}
 
+	private boolean isCheck(Piece k) {
+		return isCheck(k, board);
+	}
+
+	private boolean isCheck(Piece k, ChessBoard b) {
+		return k.opponentsAttackingMe(b).size() > 0;
+	}
+
 	private boolean isCheckMate() {
-		return false;
+		ChessBoard b = null;
+		List<Piece> pieces = board.piecesFor(movingColor.opponentColor());
+		for (Piece piece : pieces) {
+			List<GameEvent> events = piece.possibleEvents(board);
+			for (GameEvent gameEvent : events) {
+				b = EventHandler.handleEvent(gameEvent, board);
+				Piece k = findOpponentKing(b);
+				if (!isCheck(k, b)) {
+					return false;
+				}
+			}
+		}
+		return true;
+
+	}
+
+	private Piece findOpponentKing() {
+		return findOpponentKing(board);
+	}
+
+	private Piece findOpponentKing(ChessBoard b) {
+		Piece opponentKing = null;
+		List<Piece> opponentPieces = b.piecesFor(movingColor.opponentColor());
+		for (Piece piece : opponentPieces) {
+			if (piece.rank() == KING) {
+				opponentKing = piece;
+				break;
+			}
+		}
+		return opponentKing;
 	}
 
 	private void checkColor(Square fromSquare) {
