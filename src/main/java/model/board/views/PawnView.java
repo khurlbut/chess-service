@@ -13,12 +13,14 @@ import model.board.Square;
 import model.enums.Color;
 import model.enums.ViewVector;
 import model.piece.MovementTrackablePiece;
+import model.piece.Pawn;
 import model.piece.Piece;
 
 public class PawnView implements RankView {
 
     private static final ViewVector[] UP_ATTACKS = { ViewVector.RIGHT_UP, ViewVector.LEFT_UP };
     private static final ViewVector[] DOWN_ATTACKS = { ViewVector.RIGHT_DOWN, ViewVector.LEFT_DOWN };
+    private static final ViewVector[] EN_PASSANT_ATTACKS = { ViewVector.RIGHT, ViewVector.LEFT };
     private final Color viewColor;
     private final ViewVector pawnDirection;
 
@@ -27,13 +29,14 @@ public class PawnView implements RankView {
     private final List<Square> squaresHoldingPiecesDefended;
     private final ChessBoard chessBoard;
     private final Square viewPoint;
+	private Piece thisPawn;
 
     public PawnView(Color viewColor, BoardPosition boardPosition) {
 
         this.chessBoard = boardPosition.chessBoard();
         viewPoint = boardPosition.square();
+        thisPawn = chessBoard.pieceAt(viewPoint);
         this.viewColor = viewColor;
-
         this.pawnDirection = pawnDirection();
 
         moveToSquares = new ArrayList<Square>();
@@ -59,6 +62,11 @@ public class PawnView implements RankView {
             }
 
         }
+        
+        if (((Pawn) thisPawn).hasEnPassantCapture()) {
+        	moveToSquares.addAll(enPassantMoveToSquares());
+        	squaresHoldingPiecesAttacked.addAll(enPassantThreatenedSquares());
+        }
     }
 
     private void addMoveToSquares() {
@@ -66,7 +74,6 @@ public class PawnView implements RankView {
         if (chessBoard.pieceAt(oneStep) == null) {
             moveToSquares.add(oneStep);
 
-            Piece thisPawn = chessBoard.pieceAt(viewPoint);
             if (!((MovementTrackablePiece) thisPawn).hasMoved()) {
                 Square twoSteps = oneStep.neighbor(pawnDirection);
                 if (chessBoard.pieceAt(twoSteps) == null) {
@@ -105,6 +112,50 @@ public class PawnView implements RankView {
         Square leftAttack = viewPoint.neighbor(pawnAttacks()[0]);
         Square rightAttack = viewPoint.neighbor(pawnAttacks()[1]);
 
+        if (leftAttack != null && rightAttack != null) {
+            return Arrays.asList(leftAttack, rightAttack);
+        }
+        if (leftAttack != null) {
+            return Arrays.asList(leftAttack);
+        }
+        if (rightAttack != null) {
+            return Arrays.asList(rightAttack);
+        }
+
+        return Collections.emptyList();
+    }
+
+    public List<Square> enPassantMoveToSquares() {
+    	Square leftAttack = viewPoint.neighbor(pawnAttacks()[0]);
+    	Square rightAttack = viewPoint.neighbor(pawnAttacks()[1]);
+    	
+    	if (leftAttack != null && rightAttack != null) {
+    		return Arrays.asList(leftAttack, rightAttack);
+    	}
+    	if (leftAttack != null) {
+    		return Arrays.asList(leftAttack);
+    	}
+    	if (rightAttack != null) {
+    		return Arrays.asList(rightAttack);
+    	}
+    	
+    	return Collections.emptyList();
+    }
+    
+    public List<Square> enPassantThreatenedSquares() {
+        Square leftAttack = viewPoint.neighbor(ViewVector.RIGHT);
+        Square rightAttack = viewPoint.neighbor(ViewVector.LEFT);
+
+        Piece otherPiece = chessBoard.pieceAt(leftAttack);
+        if (otherPiece == null || isCollaborator(viewColor, otherPiece)) {
+        	leftAttack = null;
+        }
+        
+        otherPiece = chessBoard.pieceAt(rightAttack);
+        if (otherPiece == null || isCollaborator(viewColor, otherPiece)) {
+        	rightAttack = null;
+        }
+        
         if (leftAttack != null && rightAttack != null) {
             return Arrays.asList(leftAttack, rightAttack);
         }

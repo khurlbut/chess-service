@@ -1,6 +1,8 @@
 package model.board;
 
 import static model.piece.PieceFactory.newPiece;
+import static model.piece.PieceFactory.newEnPassantEnabledPawn;
+import static model.piece.PieceFactory.newEnPassantDisabledPawn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.Map;
 import model.enums.Color;
 import model.enums.Rank;
 import model.piece.MovementTrackablePiece;
+import model.piece.Pawn;
 import model.piece.Piece;
 
 import com.google.common.collect.ImmutableMap;
@@ -60,7 +63,17 @@ final class BackingMap {
 		return new BackingMap(newBackingMapAfterMoveOrCapture(source, target));
 	}
 
+	BackingMap enPassantCapture(Square source, Square target,
+			Square captureSquare) {
+		validateCaptureArgs(source, target, captureSquare);
+		return new BackingMap(newBackingMapAfterEnPassant(source, target, captureSquare));
+	}
+
 	BackingMap promote(Square source, Rank promoteTo) {
+		if (isNotOccupied(source)) {
+			throw new IllegalArgumentException(
+					"Attempted to Promote on an empty square!");
+		}
 		if (promoteTo == null) {
 			promoteTo = Rank.Queen;
 		}
@@ -75,6 +88,24 @@ final class BackingMap {
 		
 		return new BackingMap(newBackingMapAfterCastle(source, target,
 				rookSource, rookTarget));
+	}
+
+	public BackingMap enPassantEnable(Square source) {
+		if (isNotOccupied(source)) {
+			throw new IllegalArgumentException(
+					"Attempted to enable En Passant on an empty square!");
+		}
+
+		return new BackingMap(newBackingMapAfterEnPassantEnabled(source));
+	}
+
+	public BackingMap enPassantDisable(Square source) {
+		if (isNotOccupied(source)) {
+			throw new IllegalArgumentException(
+					"Attempted to enable En Passant on an empty square!");
+		}
+
+		return new BackingMap(newBackingMapAfterEnPassantDisabled(source));
 	}
 
 	BackingMap remove(Square source) {
@@ -111,6 +142,16 @@ final class BackingMap {
 		map.remove(source);
 		return map;
 	}
+	
+	private Map<Square, Piece> newBackingMapAfterEnPassant(Square source,
+			Square target, Square capturedSquare) {
+		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
+		
+		map.put(target, trackMovement(map.get(source)));
+		map.remove(capturedSquare);
+		map.remove(source);
+		return map;
+	}
 
 	private Map<Square, Piece> newBackingMapAfterPromotion(Square source,
 			Rank promoteTo) {
@@ -135,6 +176,24 @@ final class BackingMap {
 		map.remove(source);
 		map.remove(rookSource);
 
+		return map;
+	}
+
+	private Map<Square, Piece> newBackingMapAfterEnPassantEnabled(Square source) {
+		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
+		Pawn p = (Pawn) getPieceAt(source);
+
+		map.remove(source);
+		map.put(source, newEnPassantEnabledPawn(p));
+		return map;
+	}
+
+	private Map<Square, Piece> newBackingMapAfterEnPassantDisabled(Square source) {
+		Map<Square, Piece> map = new HashMap<Square, Piece>(backingMap);
+		Pawn p = (Pawn) getPieceAt(source);
+
+		map.remove(source);
+		map.put(source, newEnPassantDisabledPawn(p));
 		return map;
 	}
 
@@ -210,6 +269,21 @@ final class BackingMap {
 		if (isNotOccupied(target)) {
 			throw new IllegalArgumentException(
 					"Attempted to replace on an empty square!");
+		}
+	}
+	
+	private void validateCaptureArgs(Square source, Square target, Square captureSquare) {
+		if (isNotOccupied(source)) {
+			throw new IllegalArgumentException(
+					"Attempted to en passant from an empty square!");
+		}
+		if (isOccupied(target)) {
+			throw new IllegalArgumentException(
+					"Attempted to en passant to an occupied square!");
+		}
+		if (isNotOccupied(captureSquare)) {
+			throw new IllegalArgumentException(
+					"Attempted to en passant capture an empty square!");
 		}
 	}
 

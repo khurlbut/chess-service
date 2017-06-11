@@ -1,5 +1,7 @@
 package model.board;
 
+import static model.enums.ViewVector.LEFT;
+import static model.enums.ViewVector.RIGHT;
 import static model.board.views.RankViewFactory.rankView;
 
 import java.util.ArrayList;
@@ -9,9 +11,11 @@ import model.board.views.RankView;
 import model.enums.Color;
 import model.enums.Rank;
 import model.enums.Row;
+import model.enums.ViewVector;
 import model.exceptions.ConstructorArgsException;
 import model.exceptions.IllegalGameEventException;
 import model.piece.MovementTrackablePiece;
+import model.piece.Pawn;
 import model.piece.Piece;
 
 public class ChessBoard {
@@ -96,7 +100,67 @@ public class ChessBoard {
 
 	ChessBoard move(MoveEvent move) {
 		guard(move);
-		return new ChessBoard(eventsList(move), backingMap(move), boardIsSet);
+
+		ChessBoard chessBoard = new ChessBoard(eventsList(move),
+				backingMap(move), boardIsSet);
+
+		Piece p = chessBoard.pieceAt(move.target());
+		if (Rank.Pawn == p.rank() && pawnMovedTwoRows(move)) {
+			List<Square> squares = enPassantCandidates(move.target(), p.color());
+
+			for (Square s : squares) {
+				chessBoard = chessBoard.enPassantEnable(s);
+			}
+		}
+
+		return chessBoard;
+	}
+
+	private boolean pawnMovedTwoRows(MoveEvent move) {
+		return Math.abs(targetRow(move) - sourceRow(move)) == 2;
+	}
+
+	private List<Square> enPassantCandidates(Square target, Color color) {
+		Square left = target.neighbor(LEFT);
+		Square right = target.neighbor(RIGHT);
+
+		List<Square> candidateSquares = new ArrayList<Square>();
+		if (isOpponentPawn(left, color)) {
+			candidateSquares.add(left);
+		}
+		if (isOpponentPawn(right, color)) {
+			candidateSquares.add(right);
+		}
+
+		return candidateSquares;
+	}
+
+	private boolean isOpponentPawn(Square square, Color color) {
+		Piece p = pieceAt(square);
+		if (p != null) {
+			Color opponentColor = color.opponentColor();
+			if (p.rank() == Rank.Pawn && p.color() == opponentColor) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private ChessBoard enPassantEnable(Square s) {
+		EnPassantEnableEvent e = new EnPassantEnableEvent(s);
+		return new ChessBoard(eventsList(e), backingMap(e), boardIsSet);
+	}
+
+	public ChessBoard enPassantDisable(EnPassantDisableEvent e) {
+		return new ChessBoard(eventsList(e), backingMap(e), boardIsSet);
+	}
+
+	private int sourceRow(MoveEvent move) {
+		return move.source().row().ordinal();
+	}
+
+	private int targetRow(MoveEvent move) {
+		return move.target().row().ordinal();
 	}
 
 	private void guard(MoveEvent move) {
@@ -115,6 +179,24 @@ public class ChessBoard {
 	private void guard(CaptureEvent capture) {
 		guard_BoardMustBeSet();
 		if (isNotLegalCapture(capture)) {
+			throw new IllegalGameEventException("Capture is Illegal!");
+		}
+	}
+
+	public ChessBoard capture(EnPassantCaptureEvent enPassantCapture) {
+		guard(enPassantCapture);
+		
+		ChessBoard chessBoard = new ChessBoard(eventsList(enPassantCapture),
+				backingMap(enPassantCapture), boardIsSet);
+		
+		
+		
+		return chessBoard;
+	}
+	
+	private void guard(EnPassantCaptureEvent enPassantCapture) {
+		guard_BoardMustBeSet();
+		if (isNotLegalCapture(enPassantCapture)) {
 			throw new IllegalGameEventException("Capture is Illegal!");
 		}
 	}
@@ -143,15 +225,15 @@ public class ChessBoard {
 		return new ChessBoard(eventsList(castle), backingMap(castle),
 				boardIsSet);
 	}
-	
+
 	private void guard(CastleEvent castle) {
 		guard_BoardMustBeSet();
-		
+
 		MovementTrackablePiece king = king(castle);
 		MovementTrackablePiece rook = rook(castle);
-		
+
 		checkMovement(king, rook);
-		
+
 		if (!king.moveToSquares(this).contains(castle.getKingTarget())) {
 			throw new IllegalGameEventException("Move is Illegal!!");
 		}
@@ -163,10 +245,12 @@ public class ChessBoard {
 	private void checkMovement(MovementTrackablePiece king,
 			MovementTrackablePiece rook) {
 		if (king.hasMoved()) {
-			throw new IllegalGameEventException("Kings may not castle after moving!");
+			throw new IllegalGameEventException(
+					"Kings may not castle after moving!");
 		}
 		if (rook.hasMoved()) {
-			throw new IllegalGameEventException("Rooks may not castle after moving!");
+			throw new IllegalGameEventException(
+					"Rooks may not castle after moving!");
 		}
 	}
 
@@ -176,7 +260,8 @@ public class ChessBoard {
 			throw new IllegalGameEventException("Rook not found!");
 		}
 		if (p.rank() != Rank.Rook) {
-			throw new IllegalGameEventException("Kings may only castle with a Rook!");
+			throw new IllegalGameEventException(
+					"Kings may only castle with a Rook!");
 		}
 		MovementTrackablePiece rook = (MovementTrackablePiece) p;
 		return rook;
@@ -185,15 +270,15 @@ public class ChessBoard {
 	private MovementTrackablePiece king(CastleEvent castle) {
 		Piece p = pieceAt(castle.source());
 		if (p == null) {
-			throw new IllegalGameEventException("King not found!") ;
+			throw new IllegalGameEventException("King not found!");
 		}
 		if (p == null || p.rank() != Rank.King) {
-			throw new IllegalGameEventException("Only Kings may Castle!") ;
+			throw new IllegalGameEventException("Only Kings may Castle!");
 		}
 		MovementTrackablePiece king = (MovementTrackablePiece) p;
 		return king;
 	}
-	
+
 	ChessBoard remove(RemoveEvent remove) {
 		guard(remove);
 		return new ChessBoard(eventsList(remove), backingMap(remove),
@@ -220,12 +305,22 @@ public class ChessBoard {
 		case CAPTURE:
 			CaptureEvent ce = (CaptureEvent) event;
 			return backingMap.capture(ce.source(), ce.target());
+		case EN_PASSANT_CAPTURE:
+			EnPassantCaptureEvent epce = (EnPassantCaptureEvent) event;
+			return backingMap.enPassantCapture(epce.source(), epce.target(), epce.captureSquare());
 		case PROMOTE:
 			PromoteEvent pr = (PromoteEvent) event;
 			return backingMap.promote(pr.source(), pr.promoteTo());
 		case CASTLE:
 			CastleEvent ca = (CastleEvent) event;
-			return backingMap.castle(ca.source(), ca.target(), ca.rookSource(), ca.rookTarget());
+			return backingMap.castle(ca.source(), ca.target(), ca.rookSource(),
+					ca.rookTarget());
+		case EN_PASSANT_ENABLE:
+			EnPassantEnableEvent ep = ((EnPassantEnableEvent) event);
+			return backingMap.enPassantEnable(ep.source());
+		case EN_PASSANT_DISABLE:
+			EnPassantDisableEvent dis = ((EnPassantDisableEvent) event);
+			return backingMap.enPassantDisable(dis.source());
 		default:
 			throw new IllegalArgumentException("Event Type: " + event.type()
 					+ " Not Supported!");
@@ -280,9 +375,19 @@ public class ChessBoard {
 		return attackAtSquares(piece).squaresHoldingPiecesAttacked().contains(
 				event.target());
 	}
-
+	
 	private boolean isNotLegalCapture(CaptureEvent capture) {
 		return !isLegalCapture(capture);
+	}
+
+	private boolean isLegalCapture(EnPassantCaptureEvent event) {
+		Piece piece = pieceAt(event.source());
+		return attackAtSquares(piece).squaresHoldingPiecesAttacked().contains(event
+				.captureSquare());
+	}
+
+	private boolean isNotLegalCapture(EnPassantCaptureEvent enPassantCapture) {
+		return !isLegalCapture(enPassantCapture);
 	}
 
 	private List<Square> moveToSquares(Piece piece) {

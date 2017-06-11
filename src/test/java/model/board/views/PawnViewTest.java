@@ -59,7 +59,6 @@ public class PawnViewTest {
     private final Square d_6 = square(Column.D, Row.R6);
     private final Square e_4 = square(Column.E, Row.R4);
     private final Square e_7 = square(Column.E, Row.R7);
-    private final Square e_8 = square(Column.E, Row.R8);
 
     private ChessBoard chessBoard;
 
@@ -138,6 +137,7 @@ public class PawnViewTest {
     }
 
     private ChessBoard putBlackPawnsInBoxAround_E_4() {
+    	Piece b_pawn_e_2 = newPiece(Color.BLACK, Rank.Pawn, e_2);
         Piece b_pawn_e_5 = newPiece(Color.BLACK, Rank.Pawn, e_5);
         Piece b_pawn_f_5 = newPiece(Color.BLACK, Rank.Pawn, f_5);
         Piece b_pawn_f_4 = newPiece(Color.BLACK, Rank.Pawn, f_4);
@@ -147,6 +147,7 @@ public class PawnViewTest {
         Piece b_pawn_d_4 = newPiece(Color.BLACK, Rank.Pawn, d_4);
         Piece b_pawn_d_5 = newPiece(Color.BLACK, Rank.Pawn, d_5);
 
+        PutEvent put_b_pawn_e_2 = put(b_pawn_e_2);
         PutEvent put_b_pawn_e_5 = put(b_pawn_e_5);
         PutEvent put_b_pawn_f_5 = put(b_pawn_f_5);
         PutEvent put_b_pawn_f_4 = put(b_pawn_f_4);
@@ -157,13 +158,14 @@ public class PawnViewTest {
         PutEvent put_b_pawn_d_5 = put(b_pawn_d_5);
 
         List<GameEvent> putEvents =
-            eventList(put_b_pawn_e_5, put_b_pawn_f_5, put_b_pawn_f_4, put_b_pawn_f_3, put_b_pawn_e_3,
+            eventList(put_b_pawn_e_2, put_b_pawn_e_5, put_b_pawn_f_5, put_b_pawn_f_4, put_b_pawn_f_3, put_b_pawn_e_3,
                 put_b_pawn_d_3, put_b_pawn_d_4, put_b_pawn_d_5);
 
         return play(putEvents, chessBoard);
     }
 
     private ChessBoard putBlackPawnsInBoxWithRadiousTwoAround_E_4() {
+        Piece b_pawn_e_7 = newPiece(Color.BLACK, Rank.Pawn, e_7);
         Piece b_pawn_e_6 = newPiece(Color.BLACK, Rank.Pawn, e_6);
         Piece b_pawn_f_6 = newPiece(Color.BLACK, Rank.Pawn, f_6);
         Piece b_pawn_g_6 = newPiece(Color.BLACK, Rank.Pawn, g_6);
@@ -181,6 +183,7 @@ public class PawnViewTest {
         Piece b_pawn_c_6 = newPiece(Color.BLACK, Rank.Pawn, c_6);
         Piece b_pawn_d_6 = newPiece(Color.BLACK, Rank.Pawn, d_6);
 
+        PutEvent put_b_pawn_e_7 = put(b_pawn_e_7);
         PutEvent put_b_pawn_e_6 = put(b_pawn_e_6);
         PutEvent put_b_pawn_f_6 = put(b_pawn_f_6);
         PutEvent put_b_pawn_g_6 = put(b_pawn_g_6);
@@ -199,7 +202,7 @@ public class PawnViewTest {
         PutEvent put_b_pawn_d_6 = put(b_pawn_d_6);
 
         List<GameEvent> puts =
-            eventList(put_b_pawn_e_6, put_b_pawn_f_6, put_b_pawn_g_6, put_b_pawn_g_5, put_b_pawn_g_4,
+            eventList(put_b_pawn_e_7, put_b_pawn_e_6, put_b_pawn_f_6, put_b_pawn_g_6, put_b_pawn_g_5, put_b_pawn_g_4,
                 put_b_pawn_g_3, put_b_pawn_g_2, put_b_pawn_f_2, put_b_pawn_e_2, put_b_pawn_d_2, put_b_pawn_c_2,
                 put_b_pawn_c_3, put_b_pawn_c_4, put_b_pawn_c_5, put_b_pawn_c_6, put_b_pawn_d_6);
 
