@@ -1,9 +1,11 @@
 package service;
 
+import static model.board.Sugar.findKing;
+import static model.board.Sugar.isCheck;
+import static model.enums.Rank.KING;
 import static model.game.EventBuilder.getEvent;
 import static model.game.EventHandler.handleEvent;
 import static service.BoardStateTranslator.boardToString;
-import static model.enums.Rank.KING;
 
 import java.util.List;
 
@@ -11,7 +13,6 @@ import model.board.ChessBoard;
 import model.board.GameEvent;
 import model.board.Square;
 import model.enums.Color;
-import model.enums.Rank;
 import model.exceptions.IllegalGameEventException;
 import model.game.EventHandler;
 import model.piece.Piece;
@@ -46,6 +47,8 @@ public class GameController {
 	@RequestMapping(value = "/move", method = RequestMethod.GET)
 	public Game makeMove(@RequestParam("from") String from,
 			@RequestParam("to") String to) {
+		
+		ChessBoard newBoard = board;
 
 		try {
 			if (board == null) {
@@ -59,11 +62,16 @@ public class GameController {
 
 			checkColor(event.source());
 
-			board = handleEvent(event, board);
-
+			newBoard = handleEvent(event, board);
+			if (isCheck(findKing(movingColor, newBoard), newBoard)) {
+				throw new IllegalGameEventException("Move Leaves King in Check!");
+			}
+			
+			board = newBoard;
+			
 			Piece opponentKing = findOpponentKing();
 
-			if (isCheck(opponentKing)) {
+			if (isCheck(opponentKing, board)) {
 				System.out.println("Check!");
 				if (isCheckMate()) {
 					System.out.println("Check Mate!");
@@ -81,14 +89,6 @@ public class GameController {
 
 	}
 
-	private boolean isCheck(Piece k) {
-		return isCheck(k, board);
-	}
-
-	private boolean isCheck(Piece k, ChessBoard b) {
-		return k.opponentsAttackingMe(b).size() > 0;
-	}
-
 	private boolean isCheckMate() {
 		ChessBoard b = null;
 		List<Piece> pieces = board.piecesFor(movingColor.opponentColor());
@@ -97,7 +97,7 @@ public class GameController {
 			for (GameEvent gameEvent : events) {
 				b = EventHandler.handleEvent(gameEvent, board);
 				Piece k = findOpponentKing(b);
-				if (!isCheck(k, b)) {
+				if (!model.board.Sugar.isCheck(k, b)) {
 					return false;
 				}
 			}

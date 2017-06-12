@@ -1,5 +1,6 @@
 package model.board;
 
+import static model.enums.Rank.KING;
 import static model.piece.PieceFactory.newPiece;
 
 import java.util.Arrays;
@@ -16,35 +17,58 @@ import model.piece.Piece;
 
 public final class Sugar {
 
-    public static PutEvent put(Piece piece) {
-        return new PutEvent(piece);
-    }
+	public static final boolean isCheck(Piece king, ChessBoard chessBoard) {
+		if (king != null && chessBoard != null) {
+			return king.opponentsAttackingMe(chessBoard).size() > 0;
+		}
+		return false;
+	}
 
-    public static PutEvent put(Color color, Rank rank, Square square) {
-        return new PutEvent(newPiece(color, rank, square));
-    }
+	public static final Piece findKing(Color color, ChessBoard chessBoard) {
+		Piece opponentKing = null;
+		List<Piece> opponentPieces = chessBoard.piecesFor(color);
+		for (Piece piece : opponentPieces) {
+			if (piece.rank() == KING) {
+				opponentKing = piece;
+				break;
+			}
+		}
+		return opponentKing;
+	}
 
-    public static MoveEvent move(Square source, Square target) {
-        return new MoveEvent(source, target);
-    }
+	public static PutEvent put(Piece piece) {
+		return new PutEvent(piece);
+	}
 
-    public static CaptureEvent capture(Piece attacker, Piece target, ChessBoard board) {
-        Square attackingSquare = board.squareHolding(attacker);
-        Square targetSquare = board.squareHolding(target);
-        return capture(attackingSquare, targetSquare, target);
-    }
+	public static PutEvent put(Color color, Rank rank, Square square) {
+		return new PutEvent(newPiece(color, rank, square));
+	}
 
-    public static CaptureEvent capture(Square attackingSquare, Square targetSquare, Piece target) {
-        return new CaptureEvent(attackingSquare, targetSquare, target);
-    }
-    
-    public static EnPassantCaptureEvent enPassantCapture(Square attackingSquare, Square targetSquare, Square captureSquare) {
-    	return new EnPassantCaptureEvent(attackingSquare, targetSquare, captureSquare);
-    }
+	public static MoveEvent move(Square source, Square target) {
+		return new MoveEvent(source, target);
+	}
 
-    public static PromoteEvent promote(Square source) {
-        return new PromoteEvent(source, Rank.QUEEN);
-    }
+	public static CaptureEvent capture(Piece attacker, Piece target,
+			ChessBoard board) {
+		Square attackingSquare = board.squareHolding(attacker);
+		Square targetSquare = board.squareHolding(target);
+		return capture(attackingSquare, targetSquare, target);
+	}
+
+	public static CaptureEvent capture(Square attackingSquare,
+			Square targetSquare, Piece target) {
+		return new CaptureEvent(attackingSquare, targetSquare, target);
+	}
+
+	public static EnPassantCaptureEvent enPassantCapture(
+			Square attackingSquare, Square targetSquare, Square captureSquare) {
+		return new EnPassantCaptureEvent(attackingSquare, targetSquare,
+				captureSquare);
+	}
+
+	public static PromoteEvent promote(Square source) {
+		return new PromoteEvent(source, Rank.QUEEN);
+	}
 
 	public static boolean isCastle(Piece piece, Square source, Square target) {
 		if (piece.rank() == Rank.KING) {
@@ -63,10 +87,9 @@ public final class Sugar {
 	static CastleEvent castle(Square source, Square target) {
 		Square rookSquare = findRookSquare(target);
 		Square rookTarget = findRookTarget(rookSquare);
-		return new CastleEvent(source, target,
-				rookSquare, rookTarget);
+		return new CastleEvent(source, target, rookSquare, rookTarget);
 	}
-	
+
 	private static Square findRookTarget(Square rookSquare) {
 		if (rookSquare.col() == Column.A) {
 			return square(Column.D, rookSquare.row());
@@ -81,7 +104,8 @@ public final class Sugar {
 		return square(Column.H, target.row());
 	}
 
-	public static boolean isEnPassant(Piece movingPiece, Square source, Square target) {
+	public static boolean isEnPassant(Piece movingPiece, Square source,
+			Square target) {
 		if (movingPiece instanceof Pawn) {
 			Pawn pawn = (Pawn) movingPiece;
 			if (pawn.hasEnPassantCapture() && (source.col() != target.col())) {
@@ -90,14 +114,14 @@ public final class Sugar {
 		}
 		return false;
 	}
-	
+
 	public static GameEvent enPassantDisable(Square square) {
 		return new EnPassantDisableEvent(square);
 	}
-	
+
 	public static Square enPassanteTarget(Square source, Square target) {
 		Square captureTarget = null;
-		
+
 		if (source.col().ordinal() < target.col().ordinal()) {
 			captureTarget = source.neighbor(ViewVector.RIGHT);
 		} else if (source.col().ordinal() > target.col().ordinal()) {
@@ -105,44 +129,45 @@ public final class Sugar {
 		} else {
 			throw new IllegalArgumentException("Invalid En-Passant Attempt!");
 		}
-		
+
 		return captureTarget;
 	}
 
-    static RemoveEvent remove(Square square) {
-        return new RemoveEvent(square);
-    }
+	static RemoveEvent remove(Square square) {
+		return new RemoveEvent(square);
+	}
 
-    public static Square square(Column column, Row row) {
-        return new Square(column, row);
-    }
+	public static Square square(Column column, Row row) {
+		return new Square(column, row);
+	}
 
-    public static BoardPosition position(Column column, Row row, ChessBoard board) {
-        return new BoardPosition(square(column, row), board);
-    }
+	public static BoardPosition position(Column column, Row row,
+			ChessBoard board) {
+		return new BoardPosition(square(column, row), board);
+	}
 
-    public static ChessBoard play(List<GameEvent> events, ChessBoard board) {
-        for (GameEvent event : events) {
-            board = board.playEvent(event);
-        }
-        return board;
-    }
+	public static ChessBoard play(List<GameEvent> events, ChessBoard board) {
+		for (GameEvent event : events) {
+			board = board.playEvent(event);
+		}
+		return board;
+	}
 
-    public static List<GameEvent> eventList(GameEvent... events) {
-        return Arrays.asList(events);
-    }
+	public static List<GameEvent> eventList(GameEvent... events) {
+		return Arrays.asList(events);
+	}
 
-    public static boolean isCollaborator(Color color, Piece otherPiece) {
-        return otherPiece != null && otherPiece.color().equals(color);
-    }
-    
-    public static boolean isPromotion(Piece movingPiece, Row targetRow) {
+	public static boolean isCollaborator(Color color, Piece otherPiece) {
+		return otherPiece != null && otherPiece.color().equals(color);
+	}
+
+	public static boolean isPromotion(Piece movingPiece, Row targetRow) {
 		if (movingPiece.rank() == Rank.PAWN) {
 			if (targetRow == Row.R1 || targetRow == Row.R8) {
 				return true;
 			}
 		}
 		return false;
-    }
+	}
 
 }
