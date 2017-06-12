@@ -96,36 +96,24 @@ public class GameController {
 	}
 
 	private boolean isCheckMate() {
-		ChessBoard b = null;
-		List<Piece> pieces = board.piecesFor(turnColor.opponentColor());
+		ChessBoard tempBoard = null;
+		Color opponentColor = turnColor.opponentColor();
+		List<Piece> pieces = board.piecesFor(opponentColor);
+		
 		for (Piece piece : pieces) {
 			List<GameEvent> events = piece.possibleEvents(board);
+			
 			for (GameEvent gameEvent : events) {
-				b = EventHandler.handleEvent(gameEvent, board);
-				Piece k = findOpponentKing(b);
-				if (!model.board.Sugar.isCheck(k, b)) {
+				tempBoard = EventHandler.handleEvent(gameEvent, board);
+
+				Piece king = findKing(opponentColor, tempBoard);
+				if (!model.board.Sugar.isCheck(king, tempBoard)) {
 					return false;
 				}
 			}
 		}
 		return true;
 
-	}
-
-	private Piece findOpponentKing() {
-		return findOpponentKing(board);
-	}
-
-	private Piece findOpponentKing(ChessBoard b) {
-		Piece opponentKing = null;
-		List<Piece> opponentPieces = b.piecesFor(turnColor.opponentColor());
-		for (Piece piece : opponentPieces) {
-			if (piece.rank() == KING) {
-				opponentKing = piece;
-				break;
-			}
-		}
-		return opponentKing;
 	}
 
 	private void checkColor(Square fromSquare) {
