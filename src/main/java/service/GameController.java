@@ -3,6 +3,7 @@ package service;
 import static model.board.Sugar.findKing;
 import static model.board.Sugar.isCheck;
 import static model.enums.Rank.KING;
+import static model.enums.Color.WHITE;
 import static model.game.EventBuilder.getEvent;
 import static model.game.EventHandler.handleEvent;
 import static service.BoardStateTranslator.boardToString;
@@ -30,14 +31,14 @@ public class GameController {
 
 	private ChessBoard board = null;
 	private boolean gameIsOver = false;
-	private Color movingColor = Color.WHITE;
+	private Color turnColor = null;
 
 	@CrossOrigin(origins = "http://localhost:3000")
 	@RequestMapping(value = "/game", method = RequestMethod.GET)
 	public Game getGame() {
 
 		board = new ChessBoard().setBoardForGame();
-		movingColor = Color.WHITE;
+		turnColor = WHITE;
 		gameIsOver = false;
 
 		return new Game(SERVICE_VERSION, GAME_NUMBER, boardToString(board));
@@ -51,25 +52,21 @@ public class GameController {
 		ChessBoard newBoard = board;
 
 		try {
-			if (board == null) {
-				throw new IllegalGameEventException("Board is not set!");
-			}
-			if (gameIsOver) {
-				throw new IllegalGameEventException("Game is over!");
-			}
+			checkBoardState();
 
 			GameEvent event = getEvent(from, to, board);
-
 			checkColor(event.source());
 
 			newBoard = handleEvent(event, board);
-			if (isCheck(findKing(movingColor, newBoard), newBoard)) {
+			Piece king = findKing(turnColor, newBoard);
+			
+			if (isCheck(king, newBoard)) {
 				throw new IllegalGameEventException("Move Leaves King in Check!");
 			}
 			
 			board = newBoard;
 			
-			Piece opponentKing = findOpponentKing();
+			Piece opponentKing = findKing(turnColor.opponentColor(), board);
 
 			if (isCheck(opponentKing, board)) {
 				System.out.println("Check!");
@@ -79,7 +76,7 @@ public class GameController {
 				}
 			}
 
-			movingColor = movingColor.opponentColor();
+			turnColor = turnColor.opponentColor();
 
 		} catch (IllegalGameEventException e) {
 			System.out.println(e.getMessage());
@@ -89,9 +86,18 @@ public class GameController {
 
 	}
 
+	private void checkBoardState() {
+		if (board == null) {
+			throw new IllegalGameEventException("Board is not set!");
+		}
+		if (gameIsOver) {
+			throw new IllegalGameEventException("Game is over!");
+		}
+	}
+
 	private boolean isCheckMate() {
 		ChessBoard b = null;
-		List<Piece> pieces = board.piecesFor(movingColor.opponentColor());
+		List<Piece> pieces = board.piecesFor(turnColor.opponentColor());
 		for (Piece piece : pieces) {
 			List<GameEvent> events = piece.possibleEvents(board);
 			for (GameEvent gameEvent : events) {
@@ -112,7 +118,7 @@ public class GameController {
 
 	private Piece findOpponentKing(ChessBoard b) {
 		Piece opponentKing = null;
-		List<Piece> opponentPieces = b.piecesFor(movingColor.opponentColor());
+		List<Piece> opponentPieces = b.piecesFor(turnColor.opponentColor());
 		for (Piece piece : opponentPieces) {
 			if (piece.rank() == KING) {
 				opponentKing = piece;
@@ -128,7 +134,7 @@ public class GameController {
 			throw new IllegalGameEventException(
 					"Piece not found on source square!!");
 		}
-		if (p.color() != movingColor) {
+		if (p.color() != turnColor) {
 			throw new IllegalGameEventException("Not your turn!");
 		}
 	}
