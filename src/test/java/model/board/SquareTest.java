@@ -22,16 +22,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class SquareTest {
 
-    private Square e_4 = square(E, R4);
-
-    @Before
-    public void setUp() {
-    }
+    private static final Square E4 = square(E, R4);
+	private static final Square A1 = square(A, R1);
 
     @Test
     public void square_name_format_is_as_follows() {
@@ -41,57 +37,55 @@ public class SquareTest {
 
     @Test
     public void neighbor_UP() {
-        assertThat(e_4.neighbor(UP), equalTo(square(E, R5)));
+        assertThat(E4.neighbor(UP), equalTo(square(E, R5)));
     }
 
     @Test
     public void neighbor_DOWN() {
-        assertThat(e_4.neighbor(DOWN), equalTo(square(E, R3)));
+        assertThat(E4.neighbor(DOWN), equalTo(square(E, R3)));
     }
 
     @Test
     public void neighbor_LEFT() {
-        assertThat(e_4.neighbor(LEFT), equalTo(square(D, R4)));
+        assertThat(E4.neighbor(LEFT), equalTo(square(D, R4)));
     }
 
     @Test
     public void neighbor_RIGHT() {
-        assertThat(e_4.neighbor(RIGHT), equalTo(square(F, R4)));
+        assertThat(E4.neighbor(RIGHT), equalTo(square(F, R4)));
     }
 
     @Test
     public void neighbor_LEFT_UP() {
-        assertThat(e_4.neighbor(LEFT_UP), equalTo(square(D, R5)));
+        assertThat(E4.neighbor(LEFT_UP), equalTo(square(D, R5)));
     }
 
     @Test
     public void neighbor_UP_RIGHT() {
-        assertThat(e_4.neighbor(RIGHT_UP), equalTo(square(F, R5)));
+        assertThat(E4.neighbor(RIGHT_UP), equalTo(square(F, R5)));
     }
 
     @Test
     public void neighbor_LEFT_DOWN() {
-        assertThat(e_4.neighbor(LEFT_DOWN), equalTo(square(D, R3)));
+        assertThat(E4.neighbor(LEFT_DOWN), equalTo(square(D, R3)));
     }
 
     @Test
     public void neighbor_RIGHT_DOWN() {
-        assertThat(e_4.neighbor(RIGHT_DOWN), equalTo(square(F, R3)));
+        assertThat(E4.neighbor(RIGHT_DOWN), equalTo(square(F, R3)));
     }
 
     @Test
     public void neighbor_at_board_edge_is_null() {
-        Square a_1 = square(A, R1);
+        assertNull(A1.neighbor(LEFT));
+        assertNull(A1.neighbor(DOWN));
+        assertNull(A1.neighbor(LEFT_UP));
+        assertNull(A1.neighbor(LEFT_DOWN));
+        assertNull(A1.neighbor(RIGHT_DOWN));
 
-        assertNull(a_1.neighbor(LEFT));
-        assertNull(a_1.neighbor(DOWN));
-        assertNull(a_1.neighbor(LEFT_UP));
-        assertNull(a_1.neighbor(LEFT_DOWN));
-        assertNull(a_1.neighbor(RIGHT_DOWN));
-
-        assertNotNull(a_1.neighbor(UP));
-        assertNotNull(a_1.neighbor(RIGHT));
-        assertNotNull(a_1.neighbor(RIGHT_UP));
+        assertNotNull(A1.neighbor(UP));
+        assertNotNull(A1.neighbor(RIGHT));
+        assertNotNull(A1.neighbor(RIGHT_UP));
     }
 
 }
