@@ -10,31 +10,10 @@ import model.enums.Color;
 import model.enums.Column;
 import model.enums.Rank;
 import model.enums.Row;
-import model.enums.ViewVector;
 import model.piece.MovementTrackablePiece;
-import model.piece.Pawn;
 import model.piece.Piece;
 
 public final class Sugar {
-
-	public static final boolean isCheck(Piece king, ChessBoard chessBoard) {
-		if (king != null && chessBoard != null) {
-			return king.opponentsAttackingMe(chessBoard).size() > 0;
-		}
-		return false;
-	}
-
-	public static final Piece findKing(Color color, ChessBoard chessBoard) {
-		Piece opponentKing = null;
-		List<Piece> opponentPieces = chessBoard.piecesFor(color);
-		for (Piece piece : opponentPieces) {
-			if (piece.rank() == KING) {
-				opponentKing = piece;
-				break;
-			}
-		}
-		return opponentKing;
-	}
 
 	public static PutEvent put(Piece piece) {
 		return new PutEvent(piece);
@@ -58,12 +37,6 @@ public final class Sugar {
 	public static CaptureEvent capture(Square attackingSquare,
 			Square targetSquare, Piece target) {
 		return new CaptureEvent(attackingSquare, targetSquare, target);
-	}
-
-	public static EnPassantCaptureEvent enPassantCapture(
-			Square attackingSquare, Square targetSquare, Square captureSquare) {
-		return new EnPassantCaptureEvent(attackingSquare, targetSquare,
-				captureSquare);
 	}
 
 	public static PromoteEvent promote(Square source) {
@@ -104,33 +77,8 @@ public final class Sugar {
 		return square(Column.H, target.row());
 	}
 
-	public static boolean isEnPassant(Piece movingPiece, Square source,
-			Square target) {
-		if (movingPiece instanceof Pawn) {
-			Pawn pawn = (Pawn) movingPiece;
-			if (pawn.hasEnPassantCapture() && (source.col() != target.col())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static GameEvent enPassantDisable(Square square) {
 		return new EnPassantDisableEvent(square);
-	}
-
-	public static Square enPassanteTarget(Square source, Square target) {
-		Square captureTarget = null;
-
-		if (source.col().ordinal() < target.col().ordinal()) {
-			captureTarget = source.neighbor(ViewVector.RIGHT);
-		} else if (source.col().ordinal() > target.col().ordinal()) {
-			captureTarget = source.neighbor(ViewVector.LEFT);
-		} else {
-			throw new IllegalArgumentException("Invalid En-Passant Attempt!");
-		}
-
-		return captureTarget;
 	}
 
 	static RemoveEvent remove(Square square) {

@@ -1,7 +1,5 @@
 package model.board;
 
-import static model.enums.ViewVector.LEFT;
-import static model.enums.ViewVector.RIGHT;
 import static model.board.views.RankViewFactory.rankView;
 
 import java.util.ArrayList;
@@ -11,7 +9,6 @@ import model.board.views.RankView;
 import model.enums.Color;
 import model.enums.Rank;
 import model.enums.Row;
-import model.enums.ViewVector;
 import model.exceptions.ConstructorArgsException;
 import model.exceptions.IllegalGameEventException;
 import model.piece.MovementTrackablePiece;

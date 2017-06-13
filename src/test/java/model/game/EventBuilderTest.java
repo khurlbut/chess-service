@@ -27,10 +27,10 @@ import org.junit.Test;
 
 public class EventBuilderTest {
 
-	private static final String BOARD_NUMBER_AT_E2 = "12";
-	private static final String BOARD_NUMBER_AT_E3 = "20";
-	private static final String BOARD_NUMBER_AT_E4 = "28";
-	private static final String BOARD_NUMBER_AT_D5 = "35";
+	private static final int BOARD_NUMBER_AT_E2 = 12;
+	private static final int BOARD_NUMBER_AT_E3 = 20;
+	private static final int BOARD_NUMBER_AT_E4 = 28;
+	private static final int BOARD_NUMBER_AT_D5 = 35;
 	
 	private static final Square E2 = new Square(E, R2);
 	private static final Square E3 = new Square(E, R3);

@@ -4,8 +4,6 @@ import static model.board.Sugar.isCastle;
 import static model.board.Sugar.castle;
 import static model.board.Sugar.isPromotion;
 import static model.board.Sugar.promote;
-import static model.board.Sugar.isEnPassant;
-import static model.board.Sugar.enPassanteTarget;
 import static model.enums.GameEventType.MOVE;
 import model.enums.GameEventType;
 import model.exceptions.ConstructorArgsException;

@@ -20,7 +20,6 @@ public class PawnView implements RankView {
 
     private static final ViewVector[] UP_ATTACKS = { ViewVector.RIGHT_UP, ViewVector.LEFT_UP };
     private static final ViewVector[] DOWN_ATTACKS = { ViewVector.RIGHT_DOWN, ViewVector.LEFT_DOWN };
-    private static final ViewVector[] EN_PASSANT_ATTACKS = { ViewVector.RIGHT, ViewVector.LEFT };
     private final Color viewColor;
     private final ViewVector pawnDirection;
 

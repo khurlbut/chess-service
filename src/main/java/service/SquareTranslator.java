@@ -6,20 +6,16 @@ import model.enums.Row;
 
 
 public final class SquareTranslator {
+	private static final int TOTAL_SQUARES = 63;
 	private static final int COLUMNS_PER_ROW = 8;
 	
-	public static final Square boardNumberToSquare(String boardNumber) {
-		if (boardNumber == null) {
-			throw new IllegalArgumentException("Paramaters must not be null!");
-		}
-		
-		int n = new Integer(boardNumber);
-		Column col = column(n % COLUMNS_PER_ROW);
-		Row row = row(n / COLUMNS_PER_ROW);
-		
-		if (col == null || row == null) {
+	public static final Square boardNumberToSquare(int boardNumber) {
+		if (boardNumber < 0 || boardNumber > TOTAL_SQUARES) {
 			throw new IllegalArgumentException("Invalid Board Number " +boardNumber+ "!");
 		}
+		
+		Column col = column(boardNumber % COLUMNS_PER_ROW);
+		Row row = row(boardNumber / COLUMNS_PER_ROW);
 		
 		return new Square(col, row);
 	}

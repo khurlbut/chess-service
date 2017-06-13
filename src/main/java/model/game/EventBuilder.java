@@ -1,24 +1,20 @@
 package model.game;
 
 import static model.board.Sugar.capture;
-import static model.board.Sugar.enPassantCapture;
-import static model.board.Sugar.enPassanteTarget;
-import static model.board.Sugar.isEnPassant;
 import static model.board.Sugar.move;
+import static model.enums.ViewVector.LEFT;
+import static model.enums.ViewVector.RIGHT;
 import static service.SquareTranslator.boardNumberToSquare;
 import model.board.ChessBoard;
+import model.board.EnPassantCaptureEvent;
 import model.board.GameEvent;
 import model.board.Square;
+import model.piece.Pawn;
 import model.piece.Piece;
 
-public class EventBuilder {
+public final class EventBuilder {
 
-	public static final GameEvent getEvent(String from, String to, ChessBoard board) {
-		if (from == null || to == null || board == null) {
-			throw new IllegalArgumentException(
-					"Null paramaters are not allowed!");
-		}
-		
+	public static final GameEvent getEvent(int from, int to, ChessBoard board) {
 		Square fromSquare = boardNumberToSquare(from);
 		Square toSquare = boardNumberToSquare(to);
 
@@ -28,11 +24,6 @@ public class EventBuilder {
 	private static final GameEvent getEvent(Square fromSquare, Square toSquare,
 			ChessBoard board) {
 		
-		if (fromSquare == null || toSquare == null || board == null) {
-			throw new IllegalArgumentException(
-					"Null paramaters are not allowed!");
-		}
-
 		Piece moving = board.pieceAt(fromSquare);
 		Piece target = board.pieceAt(toSquare);
 
@@ -46,6 +37,44 @@ public class EventBuilder {
 		}
 
 		return move(fromSquare, toSquare);
+	}
+
+	private static boolean isEnPassant(Piece movingPiece, Square source,
+			Square target) {
+		
+		if (movingPiece instanceof Pawn) {
+			Pawn pawn = (Pawn) movingPiece;
+			if (pawn.hasEnPassantCapture() && (source.col() != target.col())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	private static EnPassantCaptureEvent enPassantCapture(
+			Square attackingSquare, Square targetSquare, Square captureSquare) {
+		
+		return new EnPassantCaptureEvent(attackingSquare, targetSquare,
+				captureSquare);
+	}
+
+	private static Square enPassanteTarget(Square source, Square target) {
+		Square captureTarget = null;
+
+		if (col(source) < col(target)) {
+			captureTarget = source.neighbor(RIGHT);
+		} else if (col(source) > col(target)) {
+			captureTarget = source.neighbor(LEFT);
+		} else {
+			throw new IllegalArgumentException("Invalid En-Passant Attempt!");
+		}
+
+		return captureTarget;
+	}
+
+	private static int col(Square source) {
+		return source.col().ordinal();
 	}
 
 }

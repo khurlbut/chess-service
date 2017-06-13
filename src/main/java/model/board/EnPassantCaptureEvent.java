@@ -3,7 +3,6 @@ package model.board;
 import static model.enums.GameEventType.EN_PASSANT_CAPTURE;
 import model.enums.GameEventType;
 import model.exceptions.ConstructorArgsException;
-import model.piece.Piece;
 
 public class EnPassantCaptureEvent implements GameEvent {
 
