@@ -15,7 +15,7 @@ public class ApplicationController {
 	@CrossOrigin(origins = "http://localhost:3000")
 	@RequestMapping(value = "/game", method = RequestMethod.GET)
 	public Game getGame() {
-		
+
 		return gamePlayer.getGame();
 
 	}
@@ -25,8 +25,17 @@ public class ApplicationController {
 	public Game makeMove(@RequestParam("from") String from,
 			@RequestParam("to") String to) {
 
-		return gamePlayer.takeTurn(Integer.parseInt(from), Integer.parseInt(to));
+		try {
+
+			int fromInt = Integer.parseInt(from);
+			int toInt = Integer.parseInt(to);
+
+			return gamePlayer.takeTurn(fromInt, toInt);
+
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"'to' and 'from' parameters must be integers between 0 and 63!");
+		}
 
 	}
-
 }
